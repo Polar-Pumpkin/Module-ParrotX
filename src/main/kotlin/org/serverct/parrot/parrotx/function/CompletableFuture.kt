@@ -28,7 +28,7 @@ fun <V> CompletableFuture<*>.step(action: () -> V?): V? {
     }.getOrNull()
 }
 
-fun <V> CompletableFuture<V>.or(other: V, action: (V, Throwable) -> Unit) {
+fun <V> CompletableFuture<V>.or(other: V, action: (V, Throwable?) -> Unit) {
     whenComplete { value, exception ->
         val final = if (value == null || exception != null) {
             exception?.printStackTrace()
@@ -37,5 +37,5 @@ fun <V> CompletableFuture<V>.or(other: V, action: (V, Throwable) -> Unit) {
             value
         }
         action(final, exception)
-    }
+    }.whenComplete { _, exception -> exception?.printStackTrace() }
 }
