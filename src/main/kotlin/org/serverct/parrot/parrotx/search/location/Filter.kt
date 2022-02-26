@@ -1,6 +1,7 @@
 package org.serverct.parrot.parrotx.search.location
 
 import org.bukkit.Location
+import org.bukkit.block.BlockFace
 import org.serverct.parrot.parrotx.search.api.filter.Filter
 import java.util.concurrent.CompletableFuture
 
@@ -15,7 +16,12 @@ object StandableFilter : Filter<Location> {
         if (at.world == null) {
             return false
         }
-        return at.block?.let { it.type.isSolid && it.getRelative(0, 1, 0).isEmpty && it.getRelative(0, 2, 0).isEmpty } ?: false
+        val block = at.block ?: return false
+        return if (block.type.isSolid) {
+            block.getRelative(BlockFace.UP).isEmpty && block.getRelative(BlockFace.UP, 2).isEmpty
+        } else {
+            !block.isEmpty && !block.isLiquid && block.getRelative(BlockFace.DOWN).type.isSolid && block.getRelative(BlockFace.UP).isEmpty
+        }
     }
 
 }
