@@ -20,7 +20,7 @@ object PlayerFreezer {
     private val labels = ConcurrentHashMap<UUID, FrozenLabel>()
 
     fun Player.freeze() {
-        labels[uniqueId] = FrozenLabel(walkSpeed, flySpeed, allowFlight, isFlying).also { info("Player $name froze with label: $it") }
+        labels[uniqueId] = FrozenLabel(walkSpeed, flySpeed, allowFlight, isFlying)
         isInvulnerable = true
         walkSpeed = 0.0F
         flySpeed = 0.0F
@@ -29,7 +29,7 @@ object PlayerFreezer {
     }
 
     fun release(uniqueId: UUID) {
-        val (walkSpeed, flySpeed, allowFlight, isFlying) = labels[uniqueId] ?: return
+        val (walkSpeed, flySpeed, allowFlight, isFlying) = labels.remove(uniqueId) ?: return
         Bukkit.getPlayer(uniqueId)?.let {
             it.isInvulnerable = false
             it.walkSpeed = walkSpeed
@@ -73,7 +73,6 @@ object PlayerFreezer {
     internal fun onQuit(event: PlayerQuitEvent) {
         val uniqueId = event.player.uniqueId
         release(uniqueId)
-        labels.remove(uniqueId)
     }
 
     @Awake(LifeCycle.DISABLE)
