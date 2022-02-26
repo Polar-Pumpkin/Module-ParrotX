@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture
 class Search<E>(builder: Search<E>.() -> Unit) {
 
     var maxTries = 3
+    var timeout = 3
     private lateinit var provider: Provider<E>
     private val filters: MutableList<Filter<E>> = ArrayList()
     private val correctors: MutableList<Corrector<E>> = ArrayList()
@@ -31,21 +32,37 @@ class Search<E>(builder: Search<E>.() -> Unit) {
 
     fun start(): CompletableFuture<E> {
         val future = CompletableFuture<E>()
+
         if (!this::provider.isInitialized) {
             future.completeExceptionally(IllegalStateException("Provider isn't initialized"))
             return future
         }
         search(future)
+
+        if (timeout > 0) {
+            submit(delay = timeout * 20L) {
+                if (!future.isDone) {
+                    future.completeExceptionally(ExceedMaxTriesException(timeout))
+                }
+            }
+        }
+
         return future
     }
 
     private fun search(result: CompletableFuture<E>) {
+        if (result.isDone) {
+            return
+        }
         if (tries++ >= maxTries) {
             result.completeExceptionally(ExceedMaxTriesException(maxTries))
             return
         }
 
         provider.generate().whenComplete queue@{ queue, exception ->
+            if (result.isDone) {
+                return@queue
+            }
             if (exception != null) {
                 result.completeExceptionally(exception)
                 return@queue
