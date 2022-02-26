@@ -16,6 +16,14 @@ fun Player.teleportTo(to: Location) {
     })
 }
 
+fun Location.standable(): Location {
+    return clone().apply {
+        x = blockX + 0.5
+        y = blockY + 1.2
+        z = blockZ + 0.5
+    }
+}
+
 fun Location.toJson(): JsonObject {
     return JsonObject().apply {
         addProperty("world", world.name)
