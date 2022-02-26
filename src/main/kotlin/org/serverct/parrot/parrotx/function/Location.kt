@@ -6,6 +6,7 @@ import com.google.gson.JsonObject
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import taboolib.common.Isolated
 
@@ -32,6 +33,14 @@ fun Location.standable(): Location {
         y = blockY + 1.2
         z = blockZ + 0.5
     }
+}
+
+fun Location.bubbleUp(): Location {
+    var cursor = block
+    while (cursor.getRelative(BlockFace.UP).isLiquid) {
+        cursor = cursor.getRelative(BlockFace.UP)
+    }
+    return cursor.location
 }
 
 fun Location.toJson(): JsonObject {
