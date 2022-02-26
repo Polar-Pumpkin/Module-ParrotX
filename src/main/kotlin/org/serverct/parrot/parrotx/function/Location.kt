@@ -5,6 +5,7 @@ package org.serverct.parrot.parrotx.function
 import com.google.gson.JsonObject
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.common.Isolated
 
@@ -14,6 +15,15 @@ fun Player.teleportTo(to: Location) {
         yaw = ref.yaw
         pitch = ref.pitch
     })
+}
+
+fun Player.standTo(at: Location) {
+    at.block.let {
+        if (it.isEmpty) {
+            it.type = Material.GLASS
+        }
+    }
+    teleport(at.standable())
 }
 
 fun Location.standable(): Location {
