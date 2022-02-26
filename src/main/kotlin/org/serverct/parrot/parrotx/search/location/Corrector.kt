@@ -29,6 +29,10 @@ object SurfaceCorrector : Corrector<Location> {
 
     private fun isSurface(block: Block): Boolean = !block.isEmpty && block.getRelative(BlockFace.UP).isEmpty
 
-    private fun closer(block: Block): Block = block.getRelative(if (block.isEmpty) BlockFace.DOWN else BlockFace.UP)
+    private fun closer(block: Block): Block = when {
+        block.isEmpty -> block.getRelative(BlockFace.DOWN)
+        block.isLiquid -> block.getRelative(BlockFace.UP)
+        else -> block
+    }
 
 }
