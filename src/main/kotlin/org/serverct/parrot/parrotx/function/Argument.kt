@@ -15,3 +15,7 @@ inline fun <reified T> Array<*>.argumentOrNull(index: Int): T? {
     return value as? T
         ?: error("缺少参数 $index 或类型不正确: $value (类型: ${T::class.simpleName}, 值: ${value::class.simpleName})")
 }
+
+fun <T> Iterator<T>.nextOrNull(): T? {
+    return if (hasNext()) next() else null
+}
