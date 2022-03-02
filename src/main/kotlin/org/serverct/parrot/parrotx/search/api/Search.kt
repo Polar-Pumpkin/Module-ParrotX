@@ -59,6 +59,7 @@ class Search<E>(builder: Search<E>.() -> Unit) {
             return
         }
 
+        // FIXME 有比较严重的性能问题，怀疑为 future 的任务残留
         provider.generate().whenComplete queue@{ queue, exception ->
             if (result.isDone) {
                 return@queue

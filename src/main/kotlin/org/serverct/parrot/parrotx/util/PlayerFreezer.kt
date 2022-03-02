@@ -53,19 +53,26 @@ object PlayerFreezer {
 
     @SubscribeEvent
     internal fun onJoin(event: PlayerJoinEvent) {
+        var modified = false
         with(event.player) {
             if (isInvulnerable) {
                 isInvulnerable = false
+                modified = true
             }
 
             if (walkSpeed == 0.0F) {
                 walkSpeed = 0.2F
+                modified = true
             }
 
             if (flySpeed == 0.0F) {
                 flySpeed = 0.1F
+                modified = true
             }
-            info("Release unexpected frozen player: $name")
+
+            if (modified) {
+                info("Release unexpected frozen player: $name")
+            }
         }
     }
 

@@ -103,14 +103,22 @@ class MenuConfiguration(private val identity: String, private val source: Config
         return shapeFlatten.elementAt(index)
     }
 
-    fun templateAt(keyword: String): MenuItem {
+    fun templateOf(keyword: String): MenuItem {
         val char = keywords[keyword] ?: Option.TEMPLATE.incorrect("缺少与 FunctionalFeature 关键词 $keyword 相关联的项目")
         return templates[char]!!
+    }
+
+    fun templateOfOrNull(keyword: String): MenuItem? {
+        return templates[keywords[keyword] ?: return null]
     }
 
     fun templateAt(index: Int): MenuItem {
         val char = charAt(index)
         return templates[char] ?: Option.TEMPLATE.incorrect("未配置字符 $char 对应项目")
+    }
+
+    fun templateAtOrNull(index: Int): MenuItem? {
+        return templates[shapeFlatten.elementAtOrNull(index) ?: return null]
     }
 
     fun indexIn(index: Int): Boolean = index in range
