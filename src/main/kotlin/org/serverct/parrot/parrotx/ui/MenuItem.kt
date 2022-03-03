@@ -1,10 +1,13 @@
 package org.serverct.parrot.parrotx.ui
 
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
 import taboolib.common.platform.function.warning
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.library.xseries.XItemStack
+import taboolib.module.chat.colored
 import taboolib.module.ui.ClickEvent
+import taboolib.platform.util.modifyMeta
 
 @Suppress("MemberVisibilityCanBePrivate")
 class MenuItem(
@@ -17,7 +20,10 @@ class MenuItem(
     constructor(config: MenuConfiguration, section: ConfigurationSection) : this(
         config,
         section.name.firstOrNull() ?: error("无法获取菜单图标映射的字符"),
-        XItemStack.deserialize(section) ?: error("无法获取菜单图标的展示物品"),
+        XItemStack.deserialize(section)?.modifyMeta<ItemMeta> {
+            displayName = displayName?.colored()
+            lore = lore?.map { it.colored() }
+        } ?: error("无法获取菜单图标的展示物品"),
         MenuFeature.mapAll(config, section.getMapList("feature"))
     )
 
