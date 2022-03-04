@@ -14,6 +14,7 @@ repositories {
 dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
     compileOnly("ink.ptms.core:v11200:11200")
+    compileOnly("ink.ptms.core:v11701:11701-minimize:mapped")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 
