@@ -14,4 +14,6 @@ abstract class UniqueMapRegistry<K, V> : DelegateMapContainer<K, V>() {
         this[value.key] = value
     }
 
+    fun register(force: Boolean = false, value: () -> V): Result<V> = runCatching { value() }.onSuccess { register(it, force) }
+
 }
