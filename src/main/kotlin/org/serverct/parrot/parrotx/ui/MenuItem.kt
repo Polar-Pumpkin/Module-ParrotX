@@ -2,6 +2,7 @@ package org.serverct.parrot.parrotx.ui
 
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.warning
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.library.xseries.XItemStack
@@ -37,6 +38,7 @@ class MenuItem(
         get() = internalIcon.clone()
 
     override fun buildIcon(icon: ItemStack, vararg args: Any?): ItemStack {
+        debug("为菜单图标 $char 构建显示物品:")
         var result = icon.clone()
         features.forEach {
             if (!it.isMapped) {
@@ -44,13 +46,16 @@ class MenuItem(
                 return@forEach
             }
             result = it.buildIcon(icon, *args)
+            debug("  - ${it.executor!!::class.simpleName}: ${it.data}")
         }
         return result
     }
 
     override fun handle(event: ClickEvent, vararg args: Any?) {
+        debug("处理菜单图标 $char 的点击事件:")
         if (features.isEmpty()) {
             event.isCancelled = true
+            debug("  未指定任何 MenuFeature")
             return
         }
         features.forEach {
@@ -59,6 +64,7 @@ class MenuItem(
                 return@forEach
             }
             it.handle(event, *args)
+            debug("  - ${it.executor!!::class.simpleName}: ${it.data}")
         }
     }
 
@@ -67,5 +73,12 @@ class MenuItem(
     operator fun component2(): ItemStack = icon
 
     operator fun component3(): List<MappedMenuFeature> = features
+
+    private fun debug(message: String, vararg args: Any) {
+        if (!config.isDebug) {
+            return
+        }
+        info(message, *args)
+    }
 
 }
