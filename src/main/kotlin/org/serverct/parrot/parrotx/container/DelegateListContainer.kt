@@ -27,4 +27,24 @@ abstract class DelegateListContainer<E> : MutableList<E> {
 
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = container.subList(fromIndex, toIndex)
 
+    override fun add(element: E): Boolean = container.add(element)
+
+    override fun add(index: Int, element: E) = container.add(index, element)
+
+    override fun addAll(elements: Collection<E>): Boolean = container.addAll(elements)
+
+    override fun addAll(index: Int, elements: Collection<E>): Boolean = container.addAll(index, elements)
+
+    override fun clear() = container.clear()
+
+    override fun remove(element: E): Boolean = container.remove(element)
+
+    override fun removeAll(elements: Collection<E>): Boolean = container.removeAll(elements)
+
+    override fun removeAt(index: Int): E = container.removeAt(index)
+
+    override fun retainAll(elements: Collection<E>): Boolean = container.retainAll(elements)
+
+    override fun set(index: Int, element: E): E = container.set(index, element)
+
 }
