@@ -96,6 +96,13 @@ class MenuConfiguration(private val identity: String, private val source: Config
         }
     }
 
+    fun shapeOf(keyword: String, action: (Int, Int, MenuItem) -> Unit) {
+        val template = templateOf(keyword)
+        indexOf(keyword, allowMulti = true).forEachIndexed { index, slot ->
+            action(index, slot, template)
+        }
+    }
+
     fun charAt(index: Int): Char {
         if (!indexIn(index)) {
             error("获取指定位置的字符时传入索引值错误: $index.")
@@ -104,7 +111,7 @@ class MenuConfiguration(private val identity: String, private val source: Config
     }
 
     fun templateOf(keyword: String): MenuItem {
-        val char = keywords[keyword] ?: Option.TEMPLATE.incorrect("缺少与 FunctionalFeature 关键词 $keyword 相关联的项目")
+        val char = keywords[keyword] ?: Option.TEMPLATE.incorrect("缺少与 Functional 关键词 $keyword 相关联的项目")
         return templates[char]!!
     }
 
