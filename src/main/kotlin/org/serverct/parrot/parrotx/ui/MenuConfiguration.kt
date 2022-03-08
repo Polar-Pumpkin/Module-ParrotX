@@ -110,6 +110,8 @@ class MenuConfiguration(private val identity: String, private val source: Config
         return shapeFlatten.elementAt(index)
     }
 
+    fun keywordAt(index: Int): String? = keywords.inverse()[charAt(index)]
+
     fun templateOf(keyword: String): MenuItem {
         val char = keywords[keyword] ?: Option.TEMPLATE.incorrect("缺少与 Functional 关键词 $keyword 相关联的项目")
         return templates[char]!!
