@@ -51,7 +51,7 @@ class MenuItem(
         return result
     }
 
-    fun iconWith(vararg args: Any): ItemStack = buildIcon(icon, *args)
+    fun iconWith(vararg args: Any?): ItemStack = buildIcon(icon, *args)
 
     override fun handle(event: ClickEvent, vararg args: Any?) {
         debug("处理菜单图标 $char 的点击事件:")

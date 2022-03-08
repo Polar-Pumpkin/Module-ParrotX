@@ -151,7 +151,7 @@ class MenuConfiguration(private val identity: String, private val source: Config
         return indexes
     }
 
-    fun iconOf(keyword: String, fallback: Boolean, vararg args: Any): ItemStack {
+    fun iconOf(keyword: String, fallback: Boolean, vararg args: Any?): ItemStack {
         if (fallback) {
             return templateOfOrNull("Fallback")?.iconWith(*args) ?: ItemStack(Material.AIR)
         }
