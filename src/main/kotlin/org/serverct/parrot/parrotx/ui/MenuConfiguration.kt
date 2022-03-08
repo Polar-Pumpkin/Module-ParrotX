@@ -151,6 +151,13 @@ class MenuConfiguration(private val identity: String, private val source: Config
         return indexes
     }
 
+    fun iconOf(keyword: String, fallback: Boolean, vararg args: Any): ItemStack {
+        if (fallback) {
+            return templateOfOrNull("Fallback")?.iconWith(*args) ?: ItemStack(Material.AIR)
+        }
+        return templateOf(keyword).iconWith(*args)
+    }
+
     private enum class Option(val path: String, val display: String) {
         TITLE("Title", "标题"),
         ROWS("Rows", "行数"),
