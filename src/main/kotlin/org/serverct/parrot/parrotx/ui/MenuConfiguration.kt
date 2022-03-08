@@ -124,7 +124,7 @@ class MenuConfiguration(private val identity: String, private val source: Config
     fun indexIn(index: Int): Boolean = index in range
 
     fun indexOf(keyword: String, allowEmpty: Boolean = false, allowMulti: Boolean = false): Set<Int> {
-        val indexes = HashSet<Int>()
+        val indexes = LinkedHashSet<Int>()
 
         val ref = keywords[keyword]
         if (ref != null) {

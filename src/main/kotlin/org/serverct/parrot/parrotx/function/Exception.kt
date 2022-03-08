@@ -1,5 +1,5 @@
 package org.serverct.parrot.parrotx.function
 
-fun Throwable.causedBy(message: String) {
-    IllegalStateException(message, this).printStackTrace()
+fun String.causedBy(cause: Throwable) {
+    IllegalStateException(this, cause).printStackTrace()
 }
