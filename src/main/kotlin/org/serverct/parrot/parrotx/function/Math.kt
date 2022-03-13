@@ -10,4 +10,4 @@ fun Int.next(range: IntRange): Int {
     return next
 }
 
-fun Double.round(scale: Int): Double = toBigDecimal().setScale(scale, RoundingMode.HALF_DOWN).toDouble()
+fun Double.round(scale: Int = 2): Double = toBigDecimal().setScale(scale, RoundingMode.HALF_DOWN).toDouble()
