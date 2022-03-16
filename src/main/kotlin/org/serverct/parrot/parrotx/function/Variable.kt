@@ -2,6 +2,7 @@ package org.serverct.parrot.parrotx.function
 
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import taboolib.common.platform.function.info
 import taboolib.common.util.VariableReader
 import taboolib.module.chat.colored
 import taboolib.platform.util.modifyMeta
@@ -29,22 +30,16 @@ fun Collection<String>.replaceVariables(
         val result = ArrayList<String>()
         val queued = HashMap<String, Queue<String>>()
         reader.replaceNested(context) {
-            transfer(this).let {
-                if (it.isEmpty()) {
-                    return@let
-                }
-                queued[this] = LinkedList(it)
-            }
+            queued[this] = LinkedList(transfer(this))
             this
         }
-
         if (queued.isEmpty()) {
             return@flatMap listOf(context)
         }
 
         while (queued.any { (_, queue) -> queue.isNotEmpty() }) {
             result += reader.replaceNested(context) {
-                queued[this]?.poll() ?: "-"
+                (queued[this]?.poll() ?: "").also { info("[#${result.size}]替换变量: $this -> $it") }
             }
         }
         result
