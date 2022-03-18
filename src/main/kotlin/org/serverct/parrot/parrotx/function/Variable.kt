@@ -39,7 +39,7 @@ fun Collection<String>.replaceVariables(
 
         while (queued.any { (_, queue) -> queue.isNotEmpty() }) {
             result += reader.replaceNested(context) {
-                (queued[this]?.poll() ?: "").also { info("[#${result.size}]替换变量: $this -> $it") }
+                (queued[this]?.poll() ?: "")
             }
         }
         result
