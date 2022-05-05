@@ -1,6 +1,6 @@
 package org.serverct.parrot.parrotx.ui.feature.util
 
-import org.serverct.parrot.parrotx.container.UniqueMapRegistry
+import org.serverct.parrot.parrotx.container.SimpleRegistry
 import org.serverct.parrot.parrotx.ui.MenuComponent
 import org.serverct.parrot.parrotx.ui.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
@@ -17,8 +17,8 @@ interface MenuOpener {
 
     fun open(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?)
 
-    object Registry : UniqueMapRegistry<String, MenuOpener>() {
-        override val container: MutableMap<String, MenuOpener> = HashMap()
+    object Registry : SimpleRegistry<String, MenuOpener>() {
+        override val registered: MutableMap<String, MenuOpener> = HashMap()
         override val MenuOpener.key: String
             get() = name
     }

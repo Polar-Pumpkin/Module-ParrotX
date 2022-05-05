@@ -1,7 +1,7 @@
 package org.serverct.parrot.parrotx.ui
 
 import org.bukkit.inventory.ItemStack
-import org.serverct.parrot.parrotx.container.UniqueMapRegistry
+import org.serverct.parrot.parrotx.container.SimpleRegistry
 import taboolib.module.ui.ClickEvent
 
 abstract class MenuFeature : MenuFeatureBase() {
@@ -19,9 +19,8 @@ abstract class MenuFeature : MenuFeatureBase() {
             MappedMenuFeature.mapAll(config, datas)
     }
 
-    object Registry : UniqueMapRegistry<String, MenuFeature>() {
-        override val container: MutableMap<String, MenuFeature> = HashMap()
-
+    object Registry : SimpleRegistry<String, MenuFeature>() {
+        override val registered: MutableMap<String, MenuFeature> = HashMap()
         override val MenuFeature.key: String
             get() = name
     }

@@ -1,7 +1,7 @@
 package org.serverct.parrot.parrotx.ui.feature.util
 
 import org.bukkit.inventory.ItemStack
-import org.serverct.parrot.parrotx.container.UniqueMapRegistry
+import org.serverct.parrot.parrotx.container.SimpleRegistry
 import org.serverct.parrot.parrotx.ui.MenuComponent
 import org.serverct.parrot.parrotx.ui.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
@@ -20,8 +20,8 @@ interface MenuFunction {
 
     fun handle(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?)
 
-    object Registry : UniqueMapRegistry<String, MenuFunction>() {
-        override val container: MutableMap<String, MenuFunction> = HashMap()
+    object Registry : SimpleRegistry<String, MenuFunction>() {
+        override val registered: MutableMap<String, MenuFunction> = HashMap()
         override val MenuFunction.key: String
             get() = name
     }

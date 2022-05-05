@@ -1,6 +1,6 @@
 package org.serverct.parrot.parrotx.ui.feature.util
 
-import org.serverct.parrot.parrotx.container.UniqueMapRegistry
+import org.serverct.parrot.parrotx.container.SimpleRegistry
 import org.serverct.parrot.parrotx.ui.MenuComponent
 import org.serverct.parrot.parrotx.ui.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
@@ -17,8 +17,8 @@ interface VariableProvider {
 
     fun produce(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?): String
 
-    object Registry : UniqueMapRegistry<String, VariableProvider>() {
-        override val container: MutableMap<String, VariableProvider> = HashMap()
+    object Registry : SimpleRegistry<String, VariableProvider>() {
+        override val registered: MutableMap<String, VariableProvider> = HashMap()
         override val VariableProvider.key: String
             get() = name
     }
