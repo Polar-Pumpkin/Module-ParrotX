@@ -1,6 +1,7 @@
 package org.serverct.parrot.parrotx.ui
 
 import org.bukkit.inventory.ItemStack
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import taboolib.module.ui.ClickEvent
 
 @Suppress("MemberVisibilityCanBePrivate")

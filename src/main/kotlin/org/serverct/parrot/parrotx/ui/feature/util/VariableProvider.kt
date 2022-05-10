@@ -2,7 +2,7 @@ package org.serverct.parrot.parrotx.ui.feature.util
 
 import org.serverct.parrot.parrotx.container.SimpleRegistry
 import org.serverct.parrot.parrotx.ui.MenuComponent
-import org.serverct.parrot.parrotx.ui.MenuConfiguration
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
 import taboolib.common.LifeCycle
 import taboolib.common.inject.Injector

@@ -2,6 +2,7 @@ package org.serverct.parrot.parrotx.ui
 
 import org.bukkit.inventory.ItemStack
 import org.serverct.parrot.parrotx.container.SimpleRegistry
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import taboolib.module.ui.ClickEvent
 
 abstract class MenuFeature : MenuFeatureBase() {
@@ -15,8 +16,8 @@ abstract class MenuFeature : MenuFeatureBase() {
     companion object {
         fun map(config: MenuConfiguration, data: Map<*, *>): MappedMenuFeature = MappedMenuFeature.map(config, data)
 
-        fun mapAll(config: MenuConfiguration, datas: List<Map<*, *>>): List<MappedMenuFeature> =
-            MappedMenuFeature.mapAll(config, datas)
+        fun mapAll(config: MenuConfiguration, data: List<Map<*, *>>): List<MappedMenuFeature> =
+            MappedMenuFeature.mapAll(config, data)
     }
 
     object Registry : SimpleRegistry<String, MenuFeature>() {

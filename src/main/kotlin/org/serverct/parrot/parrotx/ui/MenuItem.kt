@@ -2,6 +2,7 @@ package org.serverct.parrot.parrotx.ui
 
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.warning
 import taboolib.library.configuration.ConfigurationSection

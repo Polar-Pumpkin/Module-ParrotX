@@ -1,7 +1,7 @@
 package org.serverct.parrot.parrotx.ui.feature
 
 import org.serverct.parrot.parrotx.function.getAdaptedList
-import org.serverct.parrot.parrotx.ui.MenuConfiguration
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.module.kether.KetherShell

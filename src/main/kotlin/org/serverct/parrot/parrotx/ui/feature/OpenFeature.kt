@@ -1,7 +1,7 @@
 package org.serverct.parrot.parrotx.ui.feature
 
 import org.serverct.parrot.parrotx.function.getData
-import org.serverct.parrot.parrotx.ui.MenuConfiguration
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
 import org.serverct.parrot.parrotx.ui.feature.util.MenuOpener
 import taboolib.module.ui.ClickEvent
