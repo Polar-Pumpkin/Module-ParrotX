@@ -37,9 +37,9 @@ class TemplateConfiguration(val holder: MenuConfiguration) : SimpleRegistry<Char
 
     operator fun invoke(keyword: String, isFallback: Boolean = false, fallback: String = "Fallback", vararg args: Any?): ItemStack {
         return if (isFallback) {
-            get(fallback)?.iconWith(*args) ?: ItemStack(Material.AIR)
+            get(fallback)?.invoke(*args) ?: ItemStack(Material.AIR)
         } else {
-            require(keyword).iconWith(*args)
+            require(keyword).invoke(*args)
         }
     }
 

@@ -52,7 +52,7 @@ class MenuItem(
         return result
     }
 
-    fun iconWith(vararg args: Any?): ItemStack = buildIcon(icon, *args)
+    operator fun invoke(vararg args: Any?): ItemStack = buildIcon(icon, *args)
 
     override fun handle(event: ClickEvent, vararg args: Any?) {
         debug("处理菜单图标 $char 的点击事件:")
@@ -72,9 +72,7 @@ class MenuItem(
     }
 
     operator fun component1(): Char = char
-
     operator fun component2(): ItemStack = icon
-
     operator fun component3(): List<MappedMenuFeature> = features
 
     private fun debug(message: String, vararg args: Any) {
