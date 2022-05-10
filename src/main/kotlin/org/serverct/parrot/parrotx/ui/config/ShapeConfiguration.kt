@@ -8,15 +8,15 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
 
     val raw: List<String> = holder.source.getStringList(Option.SHAPE.path)
 
-    val row: Int = raw.size
+    val rows: Int = raw.size
 
     init {
-        if (row == 0) {
+        if (rows == 0) {
             Option.SHAPE.missing()
         }
     }
 
-    val range: IntRange by lazy { 0 until (row * 9) }
+    val range: IntRange by lazy { 0 until (rows * 9) }
 
     val lines: List<String> by lazy {
         raw.map {

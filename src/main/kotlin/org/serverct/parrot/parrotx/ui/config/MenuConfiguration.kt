@@ -14,7 +14,7 @@ class MenuConfiguration(internal val source: Configuration) : MenuFeatureBase() 
     val templates: TemplateConfiguration by lazy { TemplateConfiguration(this) }
     val keywords: KeywordConfiguration by lazy { KeywordConfiguration(this) }
 
-    fun title(variables: Map<String, String>): String {
+    fun title(variables: Map<String, String> = emptyMap()): String {
         return reader.replaceNested(source.getString(Option.TITLE.path) ?: Option.TITLE.missing()) { variables[this] ?: "" }
     }
 
