@@ -40,7 +40,7 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
     operator fun contains(slot: Int): Boolean = slot in range
 
     operator fun get(keyword: String, empty: Boolean = false, multi: Boolean = true): Set<Int> {
-        val indexes = HashSet<Int>()
+        val indexes = LinkedHashSet<Int>()
         val ref = holder.keywords[keyword]
         if (ref != null) {
             flatten.forEachIndexed { index, char ->
