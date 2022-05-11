@@ -3,6 +3,7 @@ package org.serverct.parrot.parrotx.ui.config
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import org.serverct.parrot.parrotx.ui.feature.FunctionalFeature
+import taboolib.common.platform.function.info
 
 @Suppress("MemberVisibilityCanBePrivate")
 class KeywordConfiguration(val holder: MenuConfiguration) {
@@ -21,6 +22,10 @@ class KeywordConfiguration(val holder: MenuConfiguration) {
                         Option.TEMPLATE.exception("获取 $char 的 Functional 关键词时遇到错误", it).printStackTrace()
                     }
                 }
+            }
+
+            if (holder.isDebug) {
+                info("已加载的关键词: $this")
             }
         }
     }
