@@ -6,9 +6,23 @@ abstract class Registry<K, V> : Map<K, V> {
 
     abstract fun register(value: V, force: Boolean = false)
 
-    abstract fun register(force: Boolean = false, value: () -> V): Result<V>
+    open fun register(force: Boolean = false, value: () -> V): Result<V> {
+        return runCatching {
+            value()
+        }.onSuccess {
+            register(it, force)
+        }
+    }
 
-    abstract fun unregister(key: K): V?
+    open fun unregister(key: K): V? = registered.remove(key)
+
+    open fun unregisterIf(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
+        val before = size
+        registered.entries.filter(predicate).forEach { (key, _) ->
+            registered.remove(key)
+        }
+        return size < before
+    }
 
     override val size: Int
         get() = registered.size
@@ -34,21 +48,8 @@ abstract class SimpleRegistry<K, V> : Registry<K, V>() {
     abstract val V.key: K
 
     override fun register(value: V, force: Boolean) {
-        if (!force && value.key in registered) {
-            IllegalStateException("尝试向 ${this::class.simpleName} 重复注册 ${value.key}").printStackTrace()
-            return
-        }
+        check(!force && value.key in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${value.key}" }
         registered[value.key] = value
     }
-
-    override fun register(force: Boolean, value: () -> V): Result<V> {
-        return runCatching {
-            value()
-        }.onSuccess {
-            register(it, force)
-        }
-    }
-
-    override fun unregister(key: K): V? = registered.remove(key)
 
 }
