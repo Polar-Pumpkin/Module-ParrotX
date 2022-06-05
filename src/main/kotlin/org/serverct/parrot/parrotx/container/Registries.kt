@@ -1,5 +1,7 @@
 package org.serverct.parrot.parrotx.container
 
+import org.serverct.parrot.parrotx.ParrotX
+
 abstract class Registry<K, V> : Map<K, V> {
 
     abstract val registered: MutableMap<K, V>
@@ -47,9 +49,13 @@ abstract class SimpleRegistry<K, V> : Registry<K, V>() {
 
     abstract val V.key: K
 
+    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
     override fun register(value: V, force: Boolean) {
+        checkNotNull(value) { "尝试向 ${this::class.java.simpleName} 注册空值" }
         check(!force && value.key in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${value.key}" }
+
         registered[value.key] = value
+        ParrotX.debug("[{0}]注册 {1} ({2})", this::class.java.simpleName, value.key, value!!::class.java.simpleName)
     }
 
 }
