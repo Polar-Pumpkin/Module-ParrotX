@@ -52,7 +52,7 @@ abstract class SimpleRegistry<K, V> : Registry<K, V>() {
     @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
     override fun register(value: V, force: Boolean) {
         checkNotNull(value) { "尝试向 ${this::class.java.simpleName} 注册空值" }
-        check(!force && value.key in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${value.key}" }
+        check(force || value.key !in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${value.key}" }
 
         registered[value.key] = value
         ParrotX.debug("[{0}]注册 {1} ({2})", this::class.java.simpleName, value.key, value!!::class.java.simpleName)
