@@ -3,8 +3,8 @@ package org.serverct.parrot.parrotx.ui.feature.util
 import org.bukkit.inventory.ItemStack
 import org.serverct.parrot.parrotx.container.SimpleRegistry
 import org.serverct.parrot.parrotx.ui.MenuComponent
-import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import taboolib.common.LifeCycle
 import taboolib.common.inject.Injector
 import taboolib.common.platform.Awake
@@ -58,7 +58,7 @@ internal object MenuFunctionRegister : Injector.Classes, Injector.Fields {
     override val priority: Byte = 0
 
     override fun inject(clazz: Class<*>, instance: Supplier<*>) {
-        if (MenuFunction::class.java in clazz.interfaces) {
+        if (MenuFunction::class.java.isAssignableFrom(clazz)) {
             MenuFunction.Registry.register(instance.get() as MenuFunction)
         }
     }

@@ -2,8 +2,8 @@ package org.serverct.parrot.parrotx.ui.feature.util
 
 import org.serverct.parrot.parrotx.container.SimpleRegistry
 import org.serverct.parrot.parrotx.ui.MenuComponent
-import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import taboolib.common.LifeCycle
 import taboolib.common.inject.Injector
 import taboolib.common.platform.Awake
@@ -38,7 +38,7 @@ internal object MenuOpenerRegister : Injector.Classes, Injector.Fields {
     override val priority: Byte = 0
 
     override fun inject(clazz: Class<*>, instance: Supplier<*>) {
-        if (MenuOpener::class.java in clazz.interfaces) {
+        if (MenuOpener::class.java.isAssignableFrom(clazz)) {
             MenuOpener.Registry.register(instance.get() as MenuOpener)
         }
     }

@@ -11,10 +11,9 @@ internal object MenuFeatureRegister : Injector.Classes {
     override val priority: Byte = 0
 
     override fun inject(clazz: Class<*>, instance: Supplier<*>) {
-        if (MenuFeature::class.java != clazz.superclass) {
-            return
+        if (MenuFeature::class.java.isAssignableFrom(clazz)) {
+            MenuFeature.Registry.register(instance.get() as MenuFeature)
         }
-        MenuFeature.Registry.register(instance.get() as MenuFeature)
     }
 
     override fun postInject(clazz: Class<*>, instance: Supplier<*>) {
