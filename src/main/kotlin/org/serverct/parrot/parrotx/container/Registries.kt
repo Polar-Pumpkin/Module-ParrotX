@@ -59,3 +59,18 @@ abstract class SimpleRegistry<K, V> : Registry<K, V>() {
     }
 
 }
+
+abstract class GenericRegistry<K, V> : Registry<K, V>() {
+
+    abstract fun extract(value: V): K
+
+    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+    override fun register(value: V, force: Boolean) {
+        checkNotNull(value) { "尝试向 ${this::class.java.simpleName} 注册空值" }
+        check(force || extract(value) !in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${extract(value)}" }
+
+        registered[extract(value)] = value
+        ParrotX.debug("[{0}]注册 {1} ({2})", this::class.java.simpleName, extract(value), value!!::class.java.simpleName)
+    }
+
+}
