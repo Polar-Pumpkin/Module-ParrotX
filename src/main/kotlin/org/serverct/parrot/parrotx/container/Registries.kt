@@ -1,3 +1,5 @@
+@file:Suppress("DuplicatedCode")
+
 package org.serverct.parrot.parrotx.container
 
 import org.serverct.parrot.parrotx.ParrotX
@@ -5,6 +7,8 @@ import org.serverct.parrot.parrotx.ParrotX
 abstract class Registry<K, V> : Map<K, V> {
 
     abstract val registered: MutableMap<K, V>
+    
+    abstract fun register(key: K, value: V, force: Boolean = false)
 
     abstract fun register(value: V, force: Boolean = false)
 
@@ -50,13 +54,15 @@ abstract class SimpleRegistry<K, V> : Registry<K, V>() {
     abstract val V.key: K
 
     @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    override fun register(value: V, force: Boolean) {
+    override fun register(key: K, value: V, force: Boolean) {
         checkNotNull(value) { "尝试向 ${this::class.java.simpleName} 注册空值" }
-        check(force || value.key !in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${value.key}" }
+        check(force || key !in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${key}" }
 
-        registered[value.key] = value
-        ParrotX.debug("[{0}]注册 {1} ({2})", this::class.java.simpleName, value.key, value!!::class.java.simpleName)
+        registered[key] = value
+        ParrotX.debug("[{0}]注册 {1} ({2})", this::class.java.simpleName, key, value!!::class.java.simpleName)
     }
+
+    override fun register(value: V, force: Boolean) = register(value.key, value)
 
 }
 
@@ -65,12 +71,14 @@ abstract class GenericRegistry<K, V> : Registry<K, V>() {
     abstract fun extract(value: V): K
 
     @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    override fun register(value: V, force: Boolean) {
+    override fun register(key: K, value: V, force: Boolean) {
         checkNotNull(value) { "尝试向 ${this::class.java.simpleName} 注册空值" }
-        check(force || extract(value) !in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${extract(value)}" }
+        check(force || key !in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${key}" }
 
-        registered[extract(value)] = value
-        ParrotX.debug("[{0}]注册 {1} ({2})", this::class.java.simpleName, extract(value), value!!::class.java.simpleName)
+        registered[key] = value
+        ParrotX.debug("[{0}]注册 {1} ({2})", this::class.java.simpleName, key, value!!::class.java.simpleName)
     }
+
+    override fun register(value: V, force: Boolean) = register(extract(value), value)
 
 }
