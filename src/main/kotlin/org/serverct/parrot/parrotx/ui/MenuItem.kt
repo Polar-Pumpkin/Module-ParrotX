@@ -1,5 +1,6 @@
 package org.serverct.parrot.parrotx.ui
 
+import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
@@ -23,13 +24,17 @@ class MenuItem(
     constructor(config: MenuConfiguration, section: ConfigurationSection) : this(
         config,
         section.name.firstOrNull() ?: error("无法获取菜单图标映射的字符"),
-        XItemStack.deserialize(section)?.let { item ->
-            if (item.isAir()) {
-                return@let item
-            }
-            item.modifyMeta<ItemMeta> {
-                displayName = displayName?.colored()
-                lore = lore?.map { it.colored() }
+        if (section["material"] == "AIR"){
+            ItemStack(Material.AIR)
+        } else {
+            XItemStack.deserialize(section)?.let { item ->
+                if (item.isAir()) {
+                    return@let item
+                }
+                item.modifyMeta<ItemMeta> {
+                    displayName = displayName?.colored()
+                    lore = lore?.map { it.colored() }
+                }
             }
         } ?: error("无法获取菜单图标的展示物品"),
         MenuFeature.mapAll(config, section.getMapList("feature"))
