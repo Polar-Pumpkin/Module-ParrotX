@@ -1,8 +1,8 @@
 package org.serverct.parrot.parrotx.ui.feature
 
 import org.serverct.parrot.parrotx.function.basicReader
-import org.serverct.parrot.parrotx.function.getAdaptedList
-import org.serverct.parrot.parrotx.function.getData
+import org.serverct.parrot.parrotx.function.adaptList
+import org.serverct.parrot.parrotx.function.value
 import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
 import org.serverct.parrot.parrotx.ui.feature.util.VariableProvider
@@ -15,8 +15,8 @@ object CompleterFeature : MenuFeature() {
     override val name: String = "Completer"
 
     override fun handle(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?) {
-        val commands = data.getAdaptedList<String>("Commands") ?: require("Commands")
-        val message = data.getData<String>("Message")
+        val commands = data.adaptList<String>("Commands") ?: require("Commands")
+        val message = data.value<String>("Message")
         val user = event.clicker
 
         user.closeInventory()

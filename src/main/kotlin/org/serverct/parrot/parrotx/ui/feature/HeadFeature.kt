@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
-import org.serverct.parrot.parrotx.function.getData
+import org.serverct.parrot.parrotx.function.value
 import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
 import taboolib.common.reflect.Reflex.Companion.setProperty
@@ -19,7 +19,7 @@ object HeadFeature : MenuFeature() {
         if (!XMaterial.PLAYER_HEAD.isSimilar(icon)) {
             return icon
         }
-        return modifyTexture(data.getData("Texture"), icon)
+        return modifyTexture(data.value("Texture"), icon)
     }
 
     private fun modifyTexture(input: String, itemStack: ItemStack): ItemStack {

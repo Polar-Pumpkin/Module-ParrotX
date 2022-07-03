@@ -5,26 +5,23 @@ import java.util.*
 
 fun String?.toUUID(): UUID? = if (this == null) null else runCatching { UUID.fromString(this) }.getOrNull()
 
-inline fun <reified T> Map<*, *>.getAdaptedList(node: String): List<T>? {
+inline fun <reified T> Map<*, *>.adaptList(node: String): List<T>? {
     return when (val obj = this[node]) {
         is T -> listOf(obj)
-        is List<*> -> obj.filterIsInstance<T>()
+        is Collection<*> -> obj.filterIsInstance<T>()
         else -> null
     }
 }
 
-inline fun <reified T> ConfigurationSection.getAdaptedList(node: String): List<T>? {
+inline fun <reified T> ConfigurationSection.adaptList(node: String): List<T>? {
     return when (val obj = this[node]) {
         is T -> listOf(obj)
-        is List<*> -> obj.filterIsInstance<T>()
+        is Collection<*> -> obj.filterIsInstance<T>()
         else -> null
     }
 }
 
-fun <V> ConfigurationSection.mapAs(
-    path: String = "",
-    transfer: ConfigurationSection.(String) -> V?
-): MutableMap<String, V> {
+fun <V> ConfigurationSection.asMap(path: String = "", transfer: ConfigurationSection.(String) -> V?): Map<String, V> {
     val map: MutableMap<String, V> = HashMap()
     (if (path.isBlank()) this else getConfigurationSection(path))?.let { root ->
         root.getKeys(false).forEach { key ->

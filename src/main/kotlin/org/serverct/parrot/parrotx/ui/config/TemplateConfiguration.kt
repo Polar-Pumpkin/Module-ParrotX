@@ -3,7 +3,7 @@ package org.serverct.parrot.parrotx.ui.config
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.serverct.parrot.parrotx.container.SimpleRegistry
-import org.serverct.parrot.parrotx.function.mapAs
+import org.serverct.parrot.parrotx.function.asMap
 import org.serverct.parrot.parrotx.ui.MenuItem
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -14,7 +14,7 @@ class TemplateConfiguration(val holder: MenuConfiguration) : SimpleRegistry<Char
         get() = char
 
     init {
-        holder.source.mapAs(Option.TEMPLATE.path) { getConfigurationSection(it) }
+        holder.source.asMap(Option.TEMPLATE.path) { getConfigurationSection(it) }
             .forEach { (key, section) ->
                 register {
                     MenuItem(holder, section)
