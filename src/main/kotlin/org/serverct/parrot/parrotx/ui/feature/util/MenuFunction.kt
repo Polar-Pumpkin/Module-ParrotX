@@ -66,7 +66,7 @@ internal object MenuFunctionRegister : Injector.Classes, Injector.Fields {
     private val functions: MutableMap<String, MutableMap<String, MenuFunction>> = HashMap()
 
     override fun inject(field: Field, clazz: Class<*>, instance: Supplier<*>) {
-        if (MenuFunction::class.java == field.type || MenuFunction::class.java in field.type.interfaces) {
+        if (MenuFunction::class.java.isAssignableFrom(field.type)) {
             val annotation = field.getAnnotation(MenuComponent::class.java) ?: return
             val name = annotation.name.ifBlank { field.name }
             val function = field.get(instance.get()) as MenuFunction

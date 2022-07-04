@@ -1,7 +1,7 @@
 package org.serverct.parrot.parrotx.ui.feature
 
+import org.serverct.parrot.parrotx.function.VariableReaders
 import org.serverct.parrot.parrotx.function.adaptList
-import org.serverct.parrot.parrotx.function.basicReader
 import org.serverct.parrot.parrotx.ui.MenuFeature
 import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.feature.util.VariableProvider
@@ -15,7 +15,7 @@ object CommandFeature : MenuFeature() {
         val commands = data.adaptList<String>("Commands") ?: require("Commands")
         val user = event.clicker
         commands.map { context ->
-            basicReader.replaceNested(context) {
+            VariableReaders.BRACES.replaceNested(context) {
                 VariableProvider.Registry[this]?.produce(config, data, event, *args) ?: ""
             }
         }.forEach { user.performCommand(it) }

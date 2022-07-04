@@ -2,8 +2,8 @@ package org.serverct.parrot.parrotx.ui.feature.util
 
 import org.serverct.parrot.parrotx.container.SimpleRegistry
 import org.serverct.parrot.parrotx.ui.MenuComponent
-import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import taboolib.common.LifeCycle
 import taboolib.common.inject.Injector
 import taboolib.common.platform.Awake
@@ -38,7 +38,7 @@ internal object VariableProviderRegister : Injector.Fields {
     override val priority: Byte = 0
 
     override fun inject(field: Field, clazz: Class<*>, instance: Supplier<*>) {
-        if (VariableProvider::class.java == field.type || VariableProvider::class.java in field.type.interfaces) {
+        if (VariableProvider::class.java.isAssignableFrom(field.type)) {
             val annotation = field.getAnnotation(MenuComponent::class.java) ?: return
 
             val provider = field.get(instance.get()) as VariableProvider

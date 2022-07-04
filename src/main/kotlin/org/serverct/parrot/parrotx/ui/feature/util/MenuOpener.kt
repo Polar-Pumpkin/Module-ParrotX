@@ -46,7 +46,7 @@ internal object MenuOpenerRegister : Injector.Classes, Injector.Fields {
     private val openers: MutableMap<String, MutableMap<String, MenuOpener>> = HashMap()
 
     override fun inject(field: Field, clazz: Class<*>, instance: Supplier<*>) {
-        if (MenuOpener::class.java == field.type || MenuOpener::class.java in field.type.interfaces) {
+        if (MenuOpener::class.java.isAssignableFrom(field.type)) {
             val annotation = field.getAnnotation(MenuComponent::class.java) ?: return
             val name = annotation.name.ifBlank { field.name }
             val opener = field.get(instance.get()) as MenuOpener

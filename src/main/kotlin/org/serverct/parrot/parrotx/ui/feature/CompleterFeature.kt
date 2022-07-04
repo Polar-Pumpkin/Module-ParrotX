@@ -1,10 +1,10 @@
 package org.serverct.parrot.parrotx.ui.feature
 
-import org.serverct.parrot.parrotx.function.basicReader
+import org.serverct.parrot.parrotx.function.VariableReaders
 import org.serverct.parrot.parrotx.function.adaptList
 import org.serverct.parrot.parrotx.function.value
-import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.feature.util.VariableProvider
 import taboolib.module.ui.ClickEvent
 import taboolib.platform.util.nextChat
@@ -23,7 +23,7 @@ object CompleterFeature : MenuFeature() {
         user.sendInfoMessage(message)
         user.nextChat { input ->
             commands.map { context ->
-                basicReader.replaceNested(context) {
+                VariableReaders.BRACES.replaceNested(context) {
                     if (this == "input") {
                         input
                     } else {
