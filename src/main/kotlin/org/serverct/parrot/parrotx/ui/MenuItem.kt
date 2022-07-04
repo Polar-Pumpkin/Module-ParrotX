@@ -55,7 +55,7 @@ class MenuItem(
                 warning("菜单图标 $char 配置了一项无法识别的 MenuFeature: ${it.reason}")
                 return@forEach
             }
-            result = it.buildIcon(icon, *args)
+            result = it.buildIcon(result, *args)
             debug("  - ${it.executor!!::class.simpleName}: ${it.data}")
         }
         return result
