@@ -24,19 +24,23 @@ class MenuItem(
     constructor(config: MenuConfiguration, section: ConfigurationSection) : this(
         config,
         section.name.firstOrNull() ?: error("无法获取菜单图标映射的字符"),
-        if (section["material"] == "AIR"){
+        if ("${section["material"]}".uppercase() == "AIR"){
             ItemStack(Material.AIR)
         } else {
-            XItemStack.deserialize(section)?.let { item ->
-                if (item.isAir()) {
-                    return@let item
+            try {
+                XItemStack.deserialize(section).let { item ->
+                    if (item.isAir()) {
+                        return@let item
+                    }
+                    item.modifyMeta<ItemMeta> {
+                        displayName = displayName?.colored()
+                        lore = lore?.map { it.colored() }
+                    }
                 }
-                item.modifyMeta<ItemMeta> {
-                    displayName = displayName?.colored()
-                    lore = lore?.map { it.colored() }
-                }
+            } catch (ex: Throwable) {
+                throw IllegalStateException("无法获取菜单图标的展示物品", ex)
             }
-        } ?: error("无法获取菜单图标的展示物品"),
+        },
         MenuFeature.mapAll(config, section.getMapList("feature"))
     )
 
