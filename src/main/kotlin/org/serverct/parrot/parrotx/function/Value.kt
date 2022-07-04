@@ -4,8 +4,12 @@ import org.bukkit.Bukkit
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+fun usernameOrNull(uniqueId: UUID): String? {
+    return Bukkit.getOfflinePlayer(uniqueId)?.name
+}
+
 fun username(uniqueId: UUID): String {
-    return Bukkit.getPlayer(uniqueId)?.name ?: Bukkit.getOfflinePlayer(uniqueId)?.name ?: "$uniqueId"
+    return usernameOrNull(uniqueId) ?: "$uniqueId"
 }
 
 fun duration(
