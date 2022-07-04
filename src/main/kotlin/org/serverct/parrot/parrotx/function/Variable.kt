@@ -22,8 +22,8 @@ fun ItemStack.variables(reader: VariableReader = VariableReaders.BRACES, transfe
     }
 }
 
-fun ItemStack.singletons(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> String): ItemStack {
-    return variables(reader) { listOf(transfer(it)) }
+fun ItemStack.singletons(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> String?): ItemStack {
+    return variables(reader) { variable -> transfer(variable)?.let { listOf(it) } ?: emptyList() }
 }
 
 fun Collection<String>.variables(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> Collection<String>): List<String> {
@@ -47,6 +47,6 @@ fun Collection<String>.variables(reader: VariableReader = VariableReaders.BRACES
     }
 }
 
-fun Collection<String>.singletons(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> String): List<String> {
-    return variables(reader) { listOf(transfer(it)) }
+fun Collection<String>.singletons(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> String?): List<String> {
+    return variables(reader) { variable -> transfer(variable)?.let { listOf(it) } ?: emptyList() }
 }
