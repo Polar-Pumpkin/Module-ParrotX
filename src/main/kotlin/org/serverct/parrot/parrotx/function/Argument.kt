@@ -1,25 +1,25 @@
 package org.serverct.parrot.parrotx.function
 
-inline fun <reified T> Map<*, *>.value(node: String): T {
-    val value = this[node]
-    return value as? T ?: error("缺少配置项 $node 或类型不正确 (要求: ${T::class.simpleName})")
-}
-
 inline fun <reified T> Map<*, *>.valueOrNull(node: String): T? {
     val value = this[node] ?: return null
-    return value as? T
-        ?: error("缺少配置项 $node 或类型不正确: $value (类型: ${T::class.simpleName}, 值: ${value::class.simpleName})")
+    return requireNotNull(value as? T) {
+        "配置项 $node 类型不正确 (要求: ${T::class.java.simpleName}, 实际: ${value::class.java.simpleName})"
+    }
 }
 
-inline fun <reified T> Array<*>.argument(index: Int): T {
-    val value = elementAtOrNull(index)
-    return value as? T ?: error("缺少参数 $index 或类型不正确 (要求: ${T::class.simpleName})")
+inline fun <reified T> Map<*, *>.value(node: String): T {
+    return requireNotNull(valueOrNull(node)) { "缺少配置项 $node" }
 }
 
 inline fun <reified T> Array<*>.argumentOrNull(index: Int): T? {
     val value = elementAtOrNull(index) ?: return null
-    return value as? T
-        ?: error("缺少参数 $index 或类型不正确: $value (类型: ${T::class.simpleName}, 值: ${value::class.simpleName})")
+    return requireNotNull(value as? T) {
+        "参数 $index 类型不正确 (要求: ${T::class.java.simpleName}, 实际: ${value::class.java.simpleName})"
+    }
+}
+
+inline fun <reified T> Array<*>.argument(index: Int): T {
+    return requireNotNull(argumentOrNull(index)) { "缺少参数 $index" }
 }
 
 fun <T> Iterator<T>.nextOrNull(): T? {
