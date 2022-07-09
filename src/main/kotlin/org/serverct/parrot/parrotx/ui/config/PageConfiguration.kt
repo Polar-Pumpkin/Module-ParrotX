@@ -39,7 +39,7 @@ class PageConfiguration(val holder: MenuConfiguration) : SimpleRegistry<String, 
         var page: Int = 0
             private set
         val maximum: Int
-            get() = cached.size / page
+            get() = cached.size / patch
 
         val elements: List<E>
             get() = cached.stream()
