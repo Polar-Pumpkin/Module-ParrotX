@@ -1,14 +1,19 @@
-@file:Suppress("DuplicatedCode")
+@file:Suppress("MemberVisibilityCanBePrivate")
 
 package org.serverct.parrot.parrotx.container
 
-import org.serverct.parrot.parrotx.ParrotX
+import java.util.function.Predicate
 
-abstract class Registry<K, V> : Map<K, V> {
+abstract class Registry<K, V>(val registered: MutableMap<K, V>) : Map<K, V> by registered {
+    open fun transformKey(key: K): K = key
 
-    abstract val registered: MutableMap<K, V>
-    
-    abstract fun register(key: K, value: V, force: Boolean = false)
+    open fun register(key: K, value: V, force: Boolean = false) {
+        requireNotNull(value) { "尝试向 ${this::class.java.canonicalName} 注册空值" }
+
+        val transformed = transformKey(key)
+        require(force || transformed !in registered) { "尝试向 ${this::class.java.canonicalName} 重复注册 $key" }
+        registered[transformed] = value
+    }
 
     abstract fun register(value: V, force: Boolean = false)
 
@@ -30,55 +35,17 @@ abstract class Registry<K, V> : Map<K, V> {
         return size < before
     }
 
-    override val size: Int
-        get() = registered.size
-    override val keys: Set<K>
-        get() = registered.keys
-    override val values: Collection<V>
-        get() = registered.values
-    override val entries: Set<Map.Entry<K, V>>
-        get() = registered.entries
-
-    override fun get(key: K): V? = registered[key]
-
-    override fun isEmpty(): Boolean = registered.isEmpty()
-
-    override fun containsKey(key: K): Boolean = registered.containsKey(key)
-
-    override fun containsValue(value: V): Boolean = registered.containsValue(value)
-
+    fun unregisterIf(predicate: Predicate<Map.Entry<K, V>>): Boolean = unregisterIf { predicate.test(it) }
 }
 
-abstract class SimpleRegistry<K, V> : Registry<K, V>() {
-
+abstract class SimpleRegistry<K, V>(source: MutableMap<K, V>) : Registry<K, V>(source) {
     abstract val V.key: K
 
-    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    override fun register(key: K, value: V, force: Boolean) {
-        checkNotNull(value) { "尝试向 ${this::class.java.simpleName} 注册空值" }
-        check(force || key !in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${key}" }
-
-        registered[key] = value
-        ParrotX.debug("[{0}]注册 {1} ({2})", this::class.java.simpleName, key, value!!::class.java.simpleName)
-    }
-
-    override fun register(value: V, force: Boolean) = register(value.key, value)
-
+    override fun register(value: V, force: Boolean) = register(value.key, value, force)
 }
 
-abstract class GenericRegistry<K, V> : Registry<K, V>() {
-
+abstract class GenericRegistry<K, V>(source: MutableMap<K, V>) : Registry<K, V>(source) {
     abstract fun extract(value: V): K
 
-    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    override fun register(key: K, value: V, force: Boolean) {
-        checkNotNull(value) { "尝试向 ${this::class.java.simpleName} 注册空值" }
-        check(force || key !in registered) { "尝试向 ${this::class.java.simpleName} 重复注册 ${key}" }
-
-        registered[key] = value
-        ParrotX.debug("[{0}]注册 {1} ({2})", this::class.java.simpleName, key, value!!::class.java.simpleName)
-    }
-
-    override fun register(value: V, force: Boolean) = register(extract(value), value)
-
+    override fun register(value: V, force: Boolean) = register(extract(value), value, force)
 }

@@ -7,9 +7,8 @@ import java.util.function.Supplier
 import java.util.stream.Collectors
 
 @Suppress("MemberVisibilityCanBePrivate")
-class PageConfiguration(val holder: MenuConfiguration) : SimpleRegistry<String, Pageable<*>>() {
+class PageConfiguration(val holder: MenuConfiguration) : SimpleRegistry<String, Pageable<*>>(HashMap()) {
 
-    override val registered: MutableMap<String, Pageable<*>> = HashMap()
     override val Pageable<*>.key: String
         get() = name
 

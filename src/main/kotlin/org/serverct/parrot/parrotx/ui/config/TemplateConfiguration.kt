@@ -7,9 +7,8 @@ import org.serverct.parrot.parrotx.function.asMap
 import org.serverct.parrot.parrotx.ui.MenuItem
 
 @Suppress("MemberVisibilityCanBePrivate")
-class TemplateConfiguration(val holder: MenuConfiguration) : SimpleRegistry<Char, MenuItem>() {
+class TemplateConfiguration(val holder: MenuConfiguration) : SimpleRegistry<Char, MenuItem>(HashMap()) {
 
-    override val registered: MutableMap<Char, MenuItem> = HashMap()
     override val MenuItem.key: Char
         get() = char
 

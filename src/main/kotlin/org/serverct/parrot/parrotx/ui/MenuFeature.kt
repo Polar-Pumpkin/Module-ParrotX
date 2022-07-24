@@ -20,8 +20,7 @@ abstract class MenuFeature : MenuFeatureBase() {
             MappedMenuFeature.mapAll(config, data)
     }
 
-    object Registry : SimpleRegistry<String, MenuFeature>() {
-        override val registered: MutableMap<String, MenuFeature> = HashMap()
+    object Registry : SimpleRegistry<String, MenuFeature>(HashMap()) {
         override val MenuFeature.key: String
             get() = name
     }

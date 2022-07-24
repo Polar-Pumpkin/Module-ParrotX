@@ -17,8 +17,7 @@ interface MenuOpener {
 
     fun open(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?)
 
-    object Registry : SimpleRegistry<String, MenuOpener>() {
-        override val registered: MutableMap<String, MenuOpener> = HashMap()
+    object Registry : SimpleRegistry<String, MenuOpener>(HashMap()) {
         override val MenuOpener.key: String
             get() = name
     }

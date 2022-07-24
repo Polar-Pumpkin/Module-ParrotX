@@ -17,8 +17,7 @@ interface VariableProvider {
 
     fun produce(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?): String
 
-    object Registry : SimpleRegistry<String, VariableProvider>() {
-        override val registered: MutableMap<String, VariableProvider> = HashMap()
+    object Registry : SimpleRegistry<String, VariableProvider>(HashMap()) {
         override val VariableProvider.key: String
             get() = name
     }

@@ -20,8 +20,7 @@ interface MenuFunction {
 
     fun handle(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?)
 
-    object Registry : SimpleRegistry<String, MenuFunction>() {
-        override val registered: MutableMap<String, MenuFunction> = HashMap()
+    object Registry : SimpleRegistry<String, MenuFunction>(HashMap()) {
         override val MenuFunction.key: String
             get() = name
     }
