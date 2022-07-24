@@ -7,3 +7,7 @@ fun Throwable.print(reason: String, exception: (String, Throwable) -> Throwable 
 fun String.causedBy(cause: Throwable) {
     cause.print(this)
 }
+
+infix fun Throwable.because(reason: String) {
+    reason.causedBy(this)
+}
