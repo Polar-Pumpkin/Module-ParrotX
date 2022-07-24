@@ -25,6 +25,8 @@ abstract class Registry<K, V>(val registered: MutableMap<K, V>) : Map<K, V> by r
         }
     }
 
+    override fun get(key: K): V? = registered[transformKey(key)]
+
     open fun unregister(key: K): V? = registered.remove(key)
 
     open fun unregisterIf(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
