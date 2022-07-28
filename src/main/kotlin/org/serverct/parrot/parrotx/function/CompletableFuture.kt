@@ -1,5 +1,9 @@
+@file:Isolated
+@file:Suppress("unused")
+
 package org.serverct.parrot.parrotx.function
 
+import taboolib.common.Isolated
 import taboolib.common.platform.function.submit
 import java.util.concurrent.CompletableFuture
 

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.serverct.parrot.parrotx.function
 
 inline fun <reified T> Map<*, *>.valueOrNull(node: String): T? {

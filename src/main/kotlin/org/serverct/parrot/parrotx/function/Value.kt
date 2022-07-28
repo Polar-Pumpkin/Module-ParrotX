@@ -1,6 +1,10 @@
+@file:Isolated
+@file:Suppress("unused")
+
 package org.serverct.parrot.parrotx.function
 
 import org.bukkit.Bukkit
+import taboolib.common.Isolated
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -21,30 +25,18 @@ fun duration(
     )
 ): String {
     var left = seconds
-    val hour = TimeUnit.HOURS.toSeconds(1)
-    val minute = TimeUnit.MINUTES.toSeconds(1)
-
     val builder = StringBuilder()
-    (left / hour).also { hours ->
-        if (hours > 0) {
-            builder.append("$hours ${units[TimeUnit.HOURS] ?: "hr(s)"}")
-            left %= hour
+    units.forEach { (unit, name) ->
+        val duration = unit.toSeconds(1)
+        val value = left / duration
+        if (value < 0) {
+            return@forEach
         }
-    }
-    (left / minute).also { minutes ->
-        if (minutes > 0) {
-            if (builder.isNotEmpty()) {
-                builder.append(" ")
-            }
-            builder.append("$minute ${units[TimeUnit.MINUTES] ?: "min(s)"}")
-            left %= minute
-        }
-    }
-    if (left > 0) {
         if (builder.isNotEmpty()) {
             builder.append(" ")
         }
-        builder.append("$left ${units[TimeUnit.SECONDS] ?: "sec(s)"}")
+        builder.append("$value $name")
+        left %= duration
     }
-    return builder.toString()
+    return builder.toString().trim()
 }

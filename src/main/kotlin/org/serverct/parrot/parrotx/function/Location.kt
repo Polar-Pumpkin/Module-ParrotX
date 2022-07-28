@@ -1,4 +1,5 @@
 @file:Isolated
+@file:Suppress("unused")
 
 package org.serverct.parrot.parrotx.function
 

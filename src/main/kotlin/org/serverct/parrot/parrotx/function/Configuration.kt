@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.serverct.parrot.parrotx.function
 
 import taboolib.library.configuration.ConfigurationSection

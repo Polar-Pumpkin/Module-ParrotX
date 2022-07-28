@@ -5,9 +5,9 @@ import com.mojang.authlib.properties.Property
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import org.serverct.parrot.parrotx.function.value
-import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
-import taboolib.common.reflect.Reflex.Companion.setProperty
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
+import taboolib.library.reflex.Reflex.Companion.setProperty
 import taboolib.library.xseries.XMaterial
 import java.util.*
 

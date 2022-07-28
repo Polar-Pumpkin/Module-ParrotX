@@ -13,8 +13,8 @@ import taboolib.common.platform.function.info
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-@Suppress("MemberVisibilityCanBePrivate")
 @Isolated
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 object PlayerFreezer {
 
     private val labels = ConcurrentHashMap<UUID, FrozenLabel>()
