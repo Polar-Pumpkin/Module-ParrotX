@@ -14,12 +14,14 @@ class MenuConfiguration(internal val source: Configuration) : MenuFeatureBase() 
     val templates: TemplateConfiguration by lazy { TemplateConfiguration(this) }
     val keywords: KeywordConfiguration by lazy { KeywordConfiguration(this) }
 
-    fun title(variables: Map<String, String> = emptyMap()): String {
-        return reader.replaceNested(source.getString(Option.TITLE.path) ?: Option.TITLE.missing()) { variables[this] ?: "" }
+    fun title(vararg variables: Pair<String, () -> String>): String {
+        val map = variables.toMap()
+        return reader.replaceNested(source.getString(Option.TITLE.path) ?: Option.TITLE.missing()) { map[this]?.invoke() ?: "" }
     }
 
     operator fun component1(): ShapeConfiguration = shape
     operator fun component2(): TemplateConfiguration = templates
     operator fun component3(): KeywordConfiguration = keywords
+    operator fun component4(): MenuConfiguration = this
 
 }
