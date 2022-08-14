@@ -9,3 +9,5 @@ inline fun <reified T : Enum<T>> String?.enumOf(transfer: (String) -> String = {
 }
 
 inline fun <reified E : Enum<E>> E.next(): E = enumValues<E>().let { it[ordinal.next(it.indices)] }
+
+inline fun <reified E : Enum<E>> E.last(): E = enumValues<E>().let { it[ordinal.last(it.indices)] }

@@ -12,4 +12,12 @@ fun Int.next(range: IntRange): Int {
     return next
 }
 
+fun Int.last(range: IntRange): Int {
+    var last = this - 1
+    if (last < range.first) {
+        last = range.last
+    }
+    return last
+}
+
 fun Double.round(scale: Int = 2): Double = toBigDecimal().setScale(scale, RoundingMode.HALF_DOWN).toDouble()
