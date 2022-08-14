@@ -6,6 +6,7 @@ import org.serverct.parrot.parrotx.function.value
 import org.serverct.parrot.parrotx.ui.MenuFeature
 import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.feature.util.VariableProvider
+import taboolib.common.platform.function.submit
 import taboolib.module.ui.ClickEvent
 import taboolib.platform.util.nextChat
 import taboolib.platform.util.sendInfoMessage
@@ -22,7 +23,7 @@ object CompleterFeature : MenuFeature() {
         user.closeInventory()
         user.sendInfoMessage(message)
         user.nextChat { input ->
-            commands.map { context ->
+            val mapped = commands.map { context ->
                 VariableReaders.BRACES.replaceNested(context) {
                     if (this == "input") {
                         input
@@ -30,7 +31,11 @@ object CompleterFeature : MenuFeature() {
                         VariableProvider.Registry[this]?.produce(config, data, event, *args) ?: ""
                     }
                 }
-            }.forEach { user.performCommand(it) }
+            }
+
+            submit {
+                mapped.forEach(user::performCommand)
+            }
         }
     }
 
