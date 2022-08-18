@@ -13,6 +13,8 @@ class MenuConfiguration(internal val source: Configuration) : MenuFeatureBase() 
     val shape: ShapeConfiguration by lazy { ShapeConfiguration(this) }
     val templates: TemplateConfiguration by lazy { TemplateConfiguration(this) }
     val keywords: KeywordConfiguration by lazy { KeywordConfiguration(this) }
+    val cached: MutableMap<String, Any?> by lazy { HashMap() }
+    val mapped: MutableMap<Int, Any?> by lazy { HashMap() }
 
     fun title(vararg variables: Pair<String, () -> String>): String {
         val map = variables.toMap()
@@ -23,5 +25,7 @@ class MenuConfiguration(internal val source: Configuration) : MenuFeatureBase() 
     operator fun component2(): TemplateConfiguration = templates
     operator fun component3(): KeywordConfiguration = keywords
     operator fun component4(): MenuConfiguration = this
+    operator fun component5(): MutableMap<String, Any?> = cached
+    operator fun component6(): MutableMap<Int, Any?> = mapped
 
 }
