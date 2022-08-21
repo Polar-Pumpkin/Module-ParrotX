@@ -20,7 +20,6 @@ class MenuConfiguration(internal val source: Configuration) {
     val cached: MutableMap<String, Any?> by lazy { HashMap() }
     val mapped: MutableMap<Int, Any?> by lazy { HashMap() }
 
-    @JvmName("titleBySupplier")
     fun title(vararg variables: Pair<String, () -> String>): String {
         return with(variables.toMap()) {
             VariableReaders.BRACES.replaceNested(title ?: MenuPart.TITLE.missing()) {
@@ -28,9 +27,6 @@ class MenuConfiguration(internal val source: Configuration) {
             }
         }
     }
-
-    @JvmName("titleByConstant")
-    fun title(vararg variables: Pair<String, String>): String = title(*variables.map { (key, value) -> key to { value } }.toTypedArray())
 
     operator fun component1(): ShapeConfiguration = shape
     operator fun component2(): TemplateConfiguration = templates
