@@ -1,20 +1,25 @@
+@file:Isolated
+
 package org.serverct.parrot.parrotx.util
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
+import taboolib.common.Isolated
 import taboolib.common.LifeCycle
 import taboolib.common.inject.Injector
 import taboolib.common.platform.Awake
 import java.lang.reflect.Method
 import java.util.function.Supplier
 
+@Isolated
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-internal annotation class Reloadable
+annotation class Reloadable
 
 @Awake
+@Isolated
 @Suppress("unused")
-internal object Reloadables : Injector.Methods {
+object Reloadables : Injector.Methods {
     override val lifeCycle: LifeCycle = LifeCycle.LOAD
     override val priority: Byte = 0
 
