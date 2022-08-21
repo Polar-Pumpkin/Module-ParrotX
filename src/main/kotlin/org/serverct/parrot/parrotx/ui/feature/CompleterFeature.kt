@@ -1,42 +1,57 @@
 package org.serverct.parrot.parrotx.ui.feature
 
-import org.serverct.parrot.parrotx.function.VariableReaders
-import org.serverct.parrot.parrotx.function.adaptList
-import org.serverct.parrot.parrotx.function.value
+import org.serverct.parrot.parrotx.function.*
 import org.serverct.parrot.parrotx.ui.MenuFeature
-import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
-import org.serverct.parrot.parrotx.ui.feature.util.VariableProvider
+import org.serverct.parrot.parrotx.ui.data.ActionContext
+import org.serverct.parrot.parrotx.ui.registry.VariableProviders
+import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.submit
-import taboolib.module.ui.ClickEvent
+import taboolib.module.chat.colored
+import taboolib.module.kether.KetherShell
 import taboolib.platform.util.nextChat
-import taboolib.platform.util.sendInfoMessage
 
+@Suppress("unused")
 object CompleterFeature : MenuFeature() {
 
     override val name: String = "Completer"
 
-    override fun handle(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?) {
-        val commands = data.adaptList<String>("Commands") ?: require("Commands")
-        val message = data.value<String>("Message")
+    override fun handle(context: ActionContext) {
+        val (_, extra, event, _) = context
+        val mode = extra.valueOrNull<String>("mode")?.let {
+            requireNotNull(it.enumOf()) { "未知的 Completer 模式: $it" }
+        } ?: Mode.COMMAND
+        val contexts = extra.asList<String>("contexts") ?: return
+        val message = extra.value<String>("message")
         val user = event.clicker
 
         user.closeInventory()
-        user.sendInfoMessage(message)
+        user.sendMessage(message.colored())
         user.nextChat { input ->
-            val mapped = commands.map { context ->
-                VariableReaders.BRACES.replaceNested(context) {
-                    if (this == "input") {
-                        input
-                    } else {
-                        VariableProvider.Registry[this]?.produce(config, data, event, *args) ?: ""
-                    }
+            when (mode) {
+                Mode.COMMAND -> submit {
+                    contexts
+                        .map {
+                            VariableReaders.BRACES.replaceNested(it) {
+                                if (this == "input") {
+                                    input
+                                } else {
+                                    VariableProviders[this]?.produce(context) ?: ""
+                                }
+                            }
+                        }
+                        .forEach(user::performCommand)
+                }
+
+                Mode.KETHER -> KetherShell.eval(contexts, sender = adaptPlayer(user)) {
+                    set("input", input)
+                    set("args", context.args)
                 }
             }
-
-            submit {
-                mapped.forEach(user::performCommand)
-            }
         }
+    }
+
+    enum class Mode {
+        COMMAND, KETHER;
     }
 
 }

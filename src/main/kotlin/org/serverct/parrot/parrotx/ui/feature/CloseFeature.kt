@@ -1,16 +1,18 @@
 package org.serverct.parrot.parrotx.ui.feature
 
-import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.MenuFeature
+import org.serverct.parrot.parrotx.ui.data.ActionContext
 import taboolib.common.platform.function.submit
-import taboolib.module.ui.ClickEvent
 
+@Suppress("unused")
 object CloseFeature : MenuFeature() {
 
     override val name: String = "Close"
 
-    override fun handle(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?) {
-        submit { event.clicker.closeInventory() }
+    override fun handle(context: ActionContext) {
+        submit {
+            context.event.clicker.closeInventory()
+        }
     }
 
 }

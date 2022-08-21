@@ -7,18 +7,18 @@ import java.util.*
 
 fun String?.toUUID(): UUID? = if (this == null) null else runCatching { UUID.fromString(this) }.getOrNull()
 
-inline fun <reified T> Map<*, *>.adaptList(node: String): List<T>? {
+inline fun <reified E> Map<*, *>.asList(node: String): List<E>? {
     return when (val obj = this[node]) {
-        is T -> listOf(obj)
-        is Collection<*> -> obj.filterIsInstance<T>()
+        is E -> listOf(obj)
+        is Collection<*> -> obj.filterIsInstance<E>()
         else -> null
     }
 }
 
-inline fun <reified T> ConfigurationSection.adaptList(node: String): List<T>? {
+inline fun <reified E> ConfigurationSection.asList(node: String): List<E>? {
     return when (val obj = this[node]) {
-        is T -> listOf(obj)
-        is Collection<*> -> obj.filterIsInstance<T>()
+        is E -> listOf(obj)
+        is Collection<*> -> obj.filterIsInstance<E>()
         else -> null
     }
 }
@@ -35,4 +35,21 @@ fun <V> ConfigurationSection.asMap(path: String = "", transfer: ConfigurationSec
         }
     }
     return map
+}
+
+@JvmName("oneOfIterable")
+fun <V> ConfigurationSection.oneOf(paths: Iterable<String>, transfer: ConfigurationSection.(String) -> V?, predicate: (V) -> Boolean = { true }): V? {
+    return paths.firstNotNullOfOrNull {
+        transfer(this, it)?.takeIf(predicate)
+    }
+}
+
+@JvmName("oneOfArray")
+fun <V> ConfigurationSection.oneOf(paths: Array<out String>, transfer: ConfigurationSection.(String) -> V?, predicate: (V) -> Boolean = { true }): V? {
+    return oneOf(setOf(*paths), transfer, predicate)
+}
+
+@JvmName("oneOfVararg")
+fun <V> ConfigurationSection.oneOf(vararg paths: String, transfer: ConfigurationSection.(String) -> V?, predicate: (V) -> Boolean = { true }): V? {
+    return oneOf(setOf(*paths), transfer, predicate)
 }

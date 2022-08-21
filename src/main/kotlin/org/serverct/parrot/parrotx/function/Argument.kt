@@ -9,9 +9,7 @@ inline fun <reified T> Map<*, *>.valueOrNull(node: String): T? {
     }
 }
 
-inline fun <reified T> Map<*, *>.value(node: String): T {
-    return requireNotNull(valueOrNull(node)) { "缺少配置项 $node" }
-}
+inline fun <reified T> Map<*, *>.value(node: String): T = requireNotNull(valueOrNull(node)) { "缺少配置项 $node" }
 
 inline fun <reified T> Array<*>.argumentOrNull(index: Int): T? {
     val value = elementAtOrNull(index) ?: return null
@@ -20,9 +18,7 @@ inline fun <reified T> Array<*>.argumentOrNull(index: Int): T? {
     }
 }
 
-inline fun <reified T> Array<*>.argument(index: Int): T {
-    return requireNotNull(argumentOrNull(index)) { "缺少参数 $index" }
-}
+inline fun <reified T> Array<*>.argument(index: Int): T = requireNotNull(argumentOrNull(index)) { "缺少参数 $index" }
 
 fun <T> Iterator<T>.nextOrNull(): T? {
     return if (hasNext()) next() else null

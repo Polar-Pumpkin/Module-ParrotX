@@ -1,14 +1,8 @@
-@file:Isolated
 @file:Suppress("unused")
 
 package org.serverct.parrot.parrotx.function
 
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
-import taboolib.common.Isolated
 import taboolib.common.util.VariableReader
-import taboolib.module.chat.colored
-import taboolib.platform.util.modifyMeta
 import java.util.*
 
 object VariableReaders {
@@ -18,25 +12,6 @@ object VariableReaders {
 
     internal val AREA_START by lazy { "^#area (?<area>.+)$".toRegex() }
     internal val AREA_END by lazy { "^#end(?: (?<area>.+))?$".toRegex() }
-}
-
-fun ItemStack.variables(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> Collection<String>): ItemStack {
-    return modifyMeta<ItemMeta> {
-        displayName = displayName?.let {
-            reader.replaceNested(it) { transfer(this).firstOrNull() ?: "" }.colored()
-        }
-        lore = lore?.variables(reader, transfer)?.colored()
-    }
-}
-
-fun ItemStack.singletons(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> String?): ItemStack {
-    return variables(reader) { variable -> transfer(variable)?.let { listOf(it) } ?: emptyList() }
-}
-
-fun ItemStack.select(selector: (String) -> Boolean): ItemStack {
-    return modifyMeta<ItemMeta> {
-        lore = lore?.select(selector)?.colored()
-    }
 }
 
 fun Collection<String>.variables(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> Collection<String>): List<String> {
@@ -64,7 +39,7 @@ fun Collection<String>.singletons(reader: VariableReader = VariableReaders.BRACE
     return variables(reader) { variable -> transfer(variable)?.let { listOf(it) } ?: emptyList() }
 }
 
-fun Iterable<String>.select(selector: (String) -> Boolean): List<String> {
+infix fun Iterable<String>.select(selector: (String) -> Boolean): List<String> {
     val selected: MutableList<String> = ArrayList()
     val areas: Deque<String> = LinkedList()
 

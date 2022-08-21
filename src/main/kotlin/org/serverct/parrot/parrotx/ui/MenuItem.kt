@@ -1,10 +1,16 @@
 package org.serverct.parrot.parrotx.ui
 
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Multimap
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
-import taboolib.common.platform.function.info
+import org.serverct.parrot.parrotx.ui.data.ActionContext
+import org.serverct.parrot.parrotx.ui.data.BuildContext
+import org.serverct.parrot.parrotx.ui.feature.FunctionalFeature
+import org.serverct.parrot.parrotx.ui.registry.MenuFeatures
+import org.serverct.parrot.parrotx.ui.registry.MenuFeatures.key
 import taboolib.common.platform.function.warning
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.library.xseries.XItemStack
@@ -17,78 +23,99 @@ import taboolib.platform.util.modifyMeta
 class MenuItem(
     val config: MenuConfiguration,
     val char: Char,
-    private val internalIcon: ItemStack,
-    val features: List<MappedMenuFeature>
-) : ParsedMenuFeature() {
+    val features: Multimap<String, Map<String, Any?>>,
+    private val _icon: ItemStack
+) {
+
+    val icon: ItemStack
+        get() = _icon.clone()
 
     constructor(config: MenuConfiguration, section: ConfigurationSection) : this(
         config,
-        section.name.firstOrNull() ?: error("无法获取菜单图标映射的字符"),
-        if ("${section["material"]}".uppercase() == "AIR"){
-            ItemStack(Material.AIR)
-        } else {
-            try {
-                XItemStack.deserialize(section).let { item ->
-                    if (item.isAir()) {
-                        return@let item
+        requireNotNull(section.name.firstOrNull()) { "无法获取模板的映射字符" },
+        HashMultimap.create<String, Map<String, Any?>>().apply {
+            section["feature"]?.let { feature ->
+                when (feature) {
+                    is String -> put(FunctionalFeature.key, mapOf("keyword" to feature))
+                    is List<*> -> feature.forEach { value ->
+                        when (value) {
+                            is String -> put(FunctionalFeature.key, mapOf("keyword" to value))
+                            is Map<*, *> -> {
+                                val extra = value.mapKeys { (key, _) -> "$key" }
+                                val type = requireNotNull(extra["=="] ?: extra["type"]) { "未指定 Feature 类型" }.toString().lowercase()
+                                put(type, extra)
+                            }
+
+                            null -> return@forEach
+                            else -> throw IllegalArgumentException("不支持的 Feature 配置格式: $value (${value.javaClass.canonicalName})")
+                        }
                     }
-                    item.modifyMeta<ItemMeta> {
-                        displayName = displayName?.colored()
-                        lore = lore?.map { it.colored() }
-                    }
+
+                    else -> throw IllegalArgumentException("不支持的 Feature 配置格式: $feature (${feature.javaClass.canonicalName})")
                 }
-            } catch (ex: Throwable) {
-                throw IllegalStateException("无法获取菜单图标的展示物品", ex)
             }
         },
-        MenuFeature.mapAll(config, section.getMapList("feature"))
+        requireNotNull(section["material"]?.toString()) { "未指定 Material" }.let { material ->
+            if (material.equals("AIR", true)) {
+                ItemStack(Material.AIR)
+            } else {
+                try {
+                    XItemStack.deserialize(section).let deserialize@{ item ->
+                        if (item.isAir()) {
+                            return@let item
+                        }
+                        item.modifyMeta<ItemMeta> {
+                            displayName = displayName?.colored()
+                            lore = lore?.map { it.colored() }
+                        }
+                    }
+                } catch (ex: Throwable) {
+                    throw IllegalArgumentException("无法获取模板的显示物品", ex)
+                }
+            }
+        }
     )
 
-    val icon: ItemStack
-        get() = internalIcon.clone()
-
-    override fun buildIcon(icon: ItemStack, vararg args: Any?): ItemStack {
-        debug("为菜单图标 $char 构建显示物品:")
-        var result = icon.clone()
-        features.forEach {
-            if (!it.isMapped) {
-                warning("菜单图标 $char 配置了一项无法识别的 MenuFeature: ${it.reason}")
-                return@forEach
+    fun build(slot: Int, index: Int, vararg args: Any?): ItemStack {
+        var result = icon
+        val arguments = listOf(*args)
+        features.asMap().forEach { (type, extras) ->
+            val feature = MenuFeatures[type] ?: return@forEach warning("模板 $char 配置了一项未知的 Feature: $type")
+            extras.forEach { extra ->
+                val context = BuildContext(config, extra, slot, index, result, arguments)
+                try {
+                    result = feature.build(context)
+                } catch (ex: Throwable) {
+                    warning("模版 $char 在通过 Feature 构建图标时遇到错误: $type")
+                    warning("上下文: $context")
+                    ex.printStackTrace()
+                }
             }
-            result = it.buildIcon(result, *args)
-            debug("  - ${it.executor!!::class.simpleName}: ${it.data}")
         }
         return result
     }
 
-    operator fun invoke(vararg args: Any?): ItemStack = buildIcon(icon, *args)
+    operator fun invoke(slot: Int, index: Int, vararg args: Any?): ItemStack = build(slot, index, *args)
 
-    override fun handle(event: ClickEvent, vararg args: Any?) {
-        debug("处理菜单图标 $char 的点击事件:")
-        if (features.isEmpty()) {
-            event.isCancelled = true
-            debug("  未指定任何 MenuFeature")
-            return
-        }
-        features.forEach {
-            if (!it.isMapped) {
-                warning("菜单图标 $char 配置了一项无法识别的 MenuFeature: ${it.reason}")
-                return@forEach
+    fun handle(event: ClickEvent, vararg args: Any?) {
+        val arguments = listOf(*args)
+        features.asMap().forEach { (type, extras) ->
+            val feature = MenuFeatures[type] ?: return@forEach warning("模板 $char 配置了一项未知的 Feature: $type")
+            extras.forEach { extra ->
+                val context = ActionContext(config, extra, event, arguments)
+                try {
+                    feature.handle(context)
+                } catch (ex: Throwable) {
+                    warning("模版 $char 在通过 Feature 响应点击时遇到错误: $type")
+                    warning("上下文: $context")
+                    ex.printStackTrace()
+                }
             }
-            it.handle(event, *args)
-            debug("  - ${it.executor!!::class.simpleName}: ${it.data}")
         }
     }
 
     operator fun component1(): Char = char
     operator fun component2(): ItemStack = icon
-    operator fun component3(): List<MappedMenuFeature> = features
-
-    private fun debug(message: String, vararg args: Any) {
-        if (!config.isDebug) {
-            return
-        }
-        info(message, *args)
-    }
+    operator fun component3(): Multimap<String, Map<String, Any?>> = features
 
 }
