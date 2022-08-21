@@ -1,23 +1,22 @@
-package org.serverct.parrot.parrotx.ui.config
+package org.serverct.parrot.parrotx.ui.config.advance
 
+import org.serverct.parrot.parrotx.function.oneOf
 import org.serverct.parrot.parrotx.ui.MenuItem
 import org.serverct.parrot.parrotx.ui.MenuKeyword
+import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
+import org.serverct.parrot.parrotx.ui.config.MenuPart
+import taboolib.library.configuration.ConfigurationSection
 
-@Suppress("MemberVisibilityCanBePrivate")
+fun interface Shaper {
+    fun shape(slot: Int, index: Int, item: MenuItem, keyword: MenuKeyword)
+}
+
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class ShapeConfiguration(val holder: MenuConfiguration) {
 
-    val raw: List<String> = holder.source.getStringList(Option.SHAPE.path)
-
+    val raw: List<String> = holder.source.oneOf(MenuPart.SHAPE.paths, ConfigurationSection::getStringList, List<String>::isNotEmpty) ?: emptyList()
     val rows: Int = raw.size
-
-    init {
-        if (rows == 0) {
-            Option.SHAPE.missing()
-        }
-    }
-
     val range: IntRange by lazy { 0 until (rows * 9) }
-
     val lines: List<String> by lazy {
         raw.map {
             val length = it.length
@@ -30,14 +29,16 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
             }
         }
     }
-
     val array: Array<String> by lazy { lines.toTypedArray() }
-
     val flatten: String by lazy { lines.joinToString("") }
 
-    operator fun get(slot: Int): Char = flatten.elementAtOrNull(slot) ?: error("尝试获取越界槽位的字符: $slot")
+    init {
+        if (rows == 0) {
+            MenuPart.SHAPE.missing()
+        }
+    }
 
-    operator fun contains(slot: Int): Boolean = slot in range
+    operator fun get(slot: Int): Char = requireNotNull(flatten.elementAtOrNull(slot)) { "尝试获取越界槽位的字符: $slot" }
 
     operator fun get(keyword: String, empty: Boolean = false, multi: Boolean = true): Set<Int> {
         val indexes = LinkedHashSet<Int>()
@@ -51,22 +52,24 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
         }
 
         if (!empty && indexes.isEmpty()) {
-            Option.SHAPE.incorrect("未映射 Functional 关键词 $keyword($ref)")
+            MenuPart.SHAPE incorrect "未映射 Functional 关键词 $keyword($ref)"
         }
         if (!multi && indexes.size > 1) {
-            Option.SHAPE.incorrect("Functional 关键词 $keyword($ref) 映射了多个位置")
+            MenuPart.SHAPE incorrect "Functional 关键词 $keyword($ref) 映射了多个位置"
         }
         return indexes
     }
 
-    operator fun invoke(keyword: String, shaper: SimpleShaper) {
+    operator fun contains(slot: Int): Boolean = slot in range
+
+    fun one(keyword: String, shaper: Shaper) {
         val template = holder.templates.require(keyword)
         this[keyword].forEachIndexed { index, slot ->
-            shaper.execute(slot, index, template)
+            shaper.shape(slot, index, template, MenuKeyword.of(keyword))
         }
     }
 
-    operator fun invoke(vararg ignores: String, shaper: MultiShaper) {
+    fun all(vararg ignores: String, shaper: Shaper) {
         val repeats: MutableMap<Char, Int> = HashMap()
         flatten.forEachIndexed { slot, char ->
             val template = holder.templates.require(char)
@@ -74,16 +77,8 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
             if (keyword != null && keyword in ignores) {
                 return@forEachIndexed
             }
-            shaper.execute(slot, repeats.compute(char) { _, current -> (current ?: -1) + 1 }!!, template, MenuKeyword.of(keyword))
+            shaper.shape(slot, repeats.compute(char) { _, current -> (current ?: -1) + 1 }!!, template, MenuKeyword.of(keyword))
         }
-    }
-
-    fun interface SimpleShaper {
-        fun execute(slot: Int, index: Int, item: MenuItem)
-    }
-
-    fun interface MultiShaper {
-        fun execute(slot: Int, index: Int, item: MenuItem, keyword: MenuKeyword)
     }
 
 }

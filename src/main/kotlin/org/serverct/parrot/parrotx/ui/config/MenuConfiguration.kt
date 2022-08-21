@@ -1,25 +1,36 @@
 package org.serverct.parrot.parrotx.ui.config
 
-import org.serverct.parrot.parrotx.ui.MenuFeatureBase
-import taboolib.common.util.VariableReader
+import org.serverct.parrot.parrotx.function.VariableReaders
+import org.serverct.parrot.parrotx.function.oneOf
+import org.serverct.parrot.parrotx.ui.config.advance.KeywordConfiguration
+import org.serverct.parrot.parrotx.ui.config.advance.ShapeConfiguration
+import org.serverct.parrot.parrotx.ui.config.advance.TemplateConfiguration
+import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Configuration
 
-@Suppress("MemberVisibilityCanBePrivate")
-class MenuConfiguration(internal val source: Configuration) : MenuFeatureBase() {
+@Suppress("MemberVisibilityCanBePrivate", "unused")
+class MenuConfiguration(internal val source: Configuration) {
 
-    val reader by lazy { VariableReader("{", "}") }
-    val isDebug by lazy { source.getBoolean("Debug", false) }
+    val isDebug: Boolean by lazy { source.oneOf(MenuPart.DEBUG.paths, ConfigurationSection::getBoolean) ?: false }
 
+    val title: String? by lazy { source.oneOf(MenuPart.TITLE.paths, ConfigurationSection::getString) }
     val shape: ShapeConfiguration by lazy { ShapeConfiguration(this) }
     val templates: TemplateConfiguration by lazy { TemplateConfiguration(this) }
     val keywords: KeywordConfiguration by lazy { KeywordConfiguration(this) }
     val cached: MutableMap<String, Any?> by lazy { HashMap() }
     val mapped: MutableMap<Int, Any?> by lazy { HashMap() }
 
+    @JvmName("titleBySupplier")
     fun title(vararg variables: Pair<String, () -> String>): String {
-        val map = variables.toMap()
-        return reader.replaceNested(source.getString(Option.TITLE.path) ?: Option.TITLE.missing()) { map[this]?.invoke() ?: "" }
+        return with(variables.toMap()) {
+            VariableReaders.BRACES.replaceNested(title ?: MenuPart.TITLE.missing()) {
+                get(this)?.invoke() ?: ""
+            }
+        }
     }
+
+    @JvmName("titleByConstant")
+    fun title(vararg variables: Pair<String, String>): String = title(*variables.map { (key, value) -> key to { value } }.toTypedArray())
 
     operator fun component1(): ShapeConfiguration = shape
     operator fun component2(): TemplateConfiguration = templates

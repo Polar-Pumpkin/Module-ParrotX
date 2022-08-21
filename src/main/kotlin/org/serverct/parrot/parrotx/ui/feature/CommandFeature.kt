@@ -1,24 +1,25 @@
 package org.serverct.parrot.parrotx.ui.feature
 
 import org.serverct.parrot.parrotx.function.VariableReaders
-import org.serverct.parrot.parrotx.function.adaptList
+import org.serverct.parrot.parrotx.function.asList
 import org.serverct.parrot.parrotx.ui.MenuFeature
-import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
-import org.serverct.parrot.parrotx.ui.feature.util.VariableProvider
-import taboolib.module.ui.ClickEvent
+import org.serverct.parrot.parrotx.ui.data.ActionContext
+import org.serverct.parrot.parrotx.ui.registry.VariableProviders
 
+@Suppress("unused")
 object CommandFeature : MenuFeature() {
 
     override val name: String = "Command"
 
-    override fun handle(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?) {
-        val commands = data.adaptList<String>("Commands") ?: require("Commands")
+    override fun handle(context: ActionContext) {
+        val (_, extra, event, _) = context
+        val commands = extra.asList<String>("commands") ?: return
         val user = event.clicker
-        commands.map { context ->
-            VariableReaders.BRACES.replaceNested(context) {
-                VariableProvider.Registry[this]?.produce(config, data, event, *args) ?: ""
+        commands.map {
+            VariableReaders.BRACES.replaceNested(it) {
+                VariableProviders[this]?.produce(context) ?: ""
             }
-        }.forEach { user.performCommand(it) }
+        }.forEach(user::performCommand)
     }
 
 }

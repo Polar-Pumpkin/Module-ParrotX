@@ -1,73 +1,35 @@
 package org.serverct.parrot.parrotx.ui.feature.util
 
-import org.serverct.parrot.parrotx.container.SimpleRegistry
-import org.serverct.parrot.parrotx.ui.MenuComponent
-import org.serverct.parrot.parrotx.ui.MenuFeature
-import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
-import taboolib.common.LifeCycle
-import taboolib.common.inject.Injector
-import taboolib.common.platform.Awake
-import taboolib.module.ui.ClickEvent
-import java.lang.reflect.Field
-import java.util.function.Supplier
+import org.serverct.parrot.parrotx.ui.data.ActionContext
 
 interface MenuOpener {
 
-    var name: String
+    val name: String
 
-    fun open(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?)
+    fun open(context: ActionContext)
 
-    object Registry : SimpleRegistry<String, MenuOpener>(HashMap()) {
-        override val MenuOpener.key: String
-            get() = name
-    }
+    operator fun invoke(context: ActionContext) = open(context)
 
 }
 
-fun menuOpener(handler: MenuFeature.Handler<ClickEvent>) = object : MenuOpener {
-    override var name: String = "Anonymous"
-    override fun open(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?) {
-        handler.handle(config, data, event, *args)
-    }
-}
+@Suppress("unused")
+class MenuOpenerBuilder(name: String? = null, builder: MenuOpenerBuilder.() -> Unit) : MenuOpener {
 
-@Awake
-internal object MenuOpenerRegister : Injector.Classes, Injector.Fields {
-    override val lifeCycle: LifeCycle = LifeCycle.ENABLE
-    override val priority: Byte = 0
+    override var name: String = name ?: ""
+        internal set
 
-    override fun inject(clazz: Class<*>, instance: Supplier<*>) {
-        if (MenuOpener::class.java.isAssignableFrom(clazz)) {
-            MenuOpener.Registry.register(instance.get() as MenuOpener)
-        }
+    init {
+        builder()
     }
 
-    private val openers: MutableMap<String, MutableMap<String, MenuOpener>> = HashMap()
-
-    override fun inject(field: Field, clazz: Class<*>, instance: Supplier<*>) {
-        if (MenuOpener::class.java.isAssignableFrom(field.type)) {
-            val annotation = field.getAnnotation(MenuComponent::class.java) ?: return
-            val name = annotation.name.ifBlank { field.name }
-            val opener = field.get(instance.get()) as MenuOpener
-
-            openers.compute(clazz.name) { _, members ->
-                (members ?: HashMap()).also { it[name] = opener }
-            }
-        }
+    private var handler: (ActionContext) -> Unit = {
+        throw NotImplementedError("未调用 onOpen 方法实现该打开方式")
     }
 
-    override fun postInject(clazz: Class<*>, instance: Supplier<*>) {
-        val members = openers.remove(clazz.name) ?: return
-        val group = clazz.getAnnotation(MenuComponent::class.java)?.let {
-            "${it.name.ifBlank { clazz.simpleName }}$"
-        } ?: ""
-
-        members.forEach { (name, opener) ->
-            if (opener.name == "Anonymous") {
-                opener.name = "$group$name"
-            }
-            MenuOpener.Registry.register(opener)
-        }
+    fun onOpen(block: (ActionContext) -> Unit) {
+        handler = block
     }
+
+    override fun open(context: ActionContext) = handler(context)
 
 }

@@ -1,19 +1,20 @@
 package org.serverct.parrot.parrotx.ui.feature
 
-import org.serverct.parrot.parrotx.function.adaptList
-import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
+import org.serverct.parrot.parrotx.function.asList
 import org.serverct.parrot.parrotx.ui.MenuFeature
+import org.serverct.parrot.parrotx.ui.data.ActionContext
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.module.kether.KetherShell
 import taboolib.module.kether.runKether
-import taboolib.module.ui.ClickEvent
 
+@Suppress("unused")
 object KetherFeature : MenuFeature() {
 
     override val name: String = "Kether"
 
-    override fun handle(config: MenuConfiguration, data: Map<*, *>, event: ClickEvent, vararg args: Any?) {
-        val scripts = data.adaptList<String>("Scripts") ?: require("Scripts")
+    override fun handle(context: ActionContext) {
+        val (_, extra, event, _) = context
+        val scripts = extra.asList<String>("scripts") ?: return
         runKether {
             KetherShell.eval(scripts, sender = adaptPlayer(event.clicker))
         }
