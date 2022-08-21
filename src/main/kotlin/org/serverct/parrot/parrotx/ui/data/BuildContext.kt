@@ -9,5 +9,5 @@ data class BuildContext(
     val slot: Int,
     val index: Int,
     val icon: ItemStack,
-    val args: Collection<Any?>
+    val args: List<Any?>
 )
