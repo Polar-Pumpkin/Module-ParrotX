@@ -19,12 +19,12 @@ class MenuFunctionBuilder(name: String? = null, builder: MenuFunctionBuilder.() 
     override var name: String = name ?: ""
         internal set
 
+    private var builder: (BuildContext) -> ItemStack = { it.icon }
+    private var handler: (ActionContext) -> Unit = {}
+
     init {
         builder()
     }
-
-    private var builder: (BuildContext) -> ItemStack = { it.icon }
-    private var handler: (ActionContext) -> Unit = {}
 
     fun onBuild(block: (BuildContext) -> ItemStack) {
         builder = block
