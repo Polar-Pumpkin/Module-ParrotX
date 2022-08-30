@@ -41,7 +41,7 @@ class Mapped<E>(title: String) : Menu(title) {
     }
 
     override fun build(): Inventory {
-        return buildMenu<Linked<E>> {
+        return buildMenu<Linked<E>>(title) {
             val (shape, templates) = config
             rows(shape.rows)
             slots(shape[template].toList())
