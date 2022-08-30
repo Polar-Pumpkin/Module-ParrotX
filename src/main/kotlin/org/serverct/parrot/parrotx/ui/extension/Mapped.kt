@@ -12,7 +12,7 @@ class Mapped<E>(title: String) : Menu(title) {
     private lateinit var config: MenuConfiguration
     private lateinit var template: String
     private lateinit var elements: () -> Iterable<E>
-    private lateinit var args: Array<out Any?>
+    private var args: Array<out Any?> = arrayOf()
     private var prev: String = "Previous"
     private var next: String = "Next"
 
