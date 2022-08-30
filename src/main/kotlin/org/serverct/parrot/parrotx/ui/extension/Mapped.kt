@@ -24,6 +24,10 @@ class Mapped<E>(title: String) : Menu(title) {
         this.template = keyword
     }
 
+    fun elements(elements: () -> Iterable<E>) {
+        this.elements = elements
+    }
+
     fun argument(vararg args: Any?) {
         this.args = args
     }
