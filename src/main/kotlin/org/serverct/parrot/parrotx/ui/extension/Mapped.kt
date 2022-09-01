@@ -43,8 +43,9 @@ class Mapped<E>(title: String) : Menu(title) {
     override fun build(): Inventory {
         return buildMenu<Linked<E>>(title) {
             val (shape, templates) = config
+            val slots = shape[template].toList()
             rows(shape.rows)
-            slots(shape[template].toList())
+            slots(slots)
             elements { elements().toList() }
 
             val _template = templates.require(template)
@@ -65,7 +66,7 @@ class Mapped<E>(title: String) : Menu(title) {
             }
             onClick { event ->
                 event.isCancelled = true
-                if (event.rawSlot in shape) {
+                if (event.rawSlot in shape && event.rawSlot !in slots) {
                     templates[event.rawSlot]?.handle(event, this, *args)
                 }
             }
