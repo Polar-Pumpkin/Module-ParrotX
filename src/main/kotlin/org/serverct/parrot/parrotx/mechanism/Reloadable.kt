@@ -1,6 +1,6 @@
 @file:Isolated
 
-package org.serverct.parrot.parrotx.util
+package org.serverct.parrot.parrotx.mechanism
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap

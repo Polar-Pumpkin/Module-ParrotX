@@ -36,7 +36,11 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xjvm-default=all")
+        freeCompilerArgs = listOf(
+            "-Xjvm-default=all",
+            // "-opt-in=kotlin.RequiresOptIn",
+            // "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
+        )
     }
 }
 

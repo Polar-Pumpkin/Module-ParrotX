@@ -1,22 +1,23 @@
 @file:Isolated
 @file:Suppress("unused")
 
-package org.serverct.parrot.parrotx.util
+package org.serverct.parrot.parrotx.feature
 
 import org.bukkit.Bukkit
 import org.bukkit.event.player.PlayerLoginEvent
 import taboolib.common.Isolated
+import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.pluginId
 
 var hasFatalError: Boolean = false
 
-inline fun <R> fatalAction(action: () -> R): Result<R> {
+inline fun <R> important(action: () -> R): Result<R> {
     return runCatching {
         action()
-    }.onFailure {
-        Bukkit.getOnlinePlayers().forEach { online ->
-            online.kickPlayer("[${pluginId}] Fatal error")
+    }.onFailure { _ ->
+        Bukkit.getOnlinePlayers().forEach {
+            it.kickPlayer("[${pluginId}] Fatal error")
         }
         hasFatalError = true
     }
@@ -24,7 +25,7 @@ inline fun <R> fatalAction(action: () -> R): Result<R> {
 
 @Isolated
 internal object LoginListener {
-    @SubscribeEvent
+    @SubscribeEvent(EventPriority.LOWEST, true)
     fun onLogin(event: PlayerLoginEvent) {
         if (hasFatalError) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "[${pluginId}] Fatal error")

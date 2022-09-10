@@ -8,6 +8,6 @@ inline fun <reified T : Enum<T>> String?.enumOf(transfer: (String) -> String = {
     return if (this == null) null else Enums.getIfPresent(T::class.java, transfer(this)).orNull()
 }
 
-inline fun <reified E : Enum<E>> E.next(): E = enumValues<E>().let { it[ordinal.next(it.indices)] }
+inline fun <reified T : Enum<T>> T.next(): T = enumValues<T>().let { it[ordinal.next(it.indices)] }
 
-inline fun <reified E : Enum<E>> E.last(): E = enumValues<E>().let { it[ordinal.last(it.indices)] }
+inline fun <reified T : Enum<T>> T.last(): T = enumValues<T>().let { it[ordinal.last(it.indices)] }
