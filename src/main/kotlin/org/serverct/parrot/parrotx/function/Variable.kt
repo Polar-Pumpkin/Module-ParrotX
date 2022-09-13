@@ -14,12 +14,12 @@ object VariableReaders {
     internal val AREA_END by lazy { "^#end(?: (?<area>.+))?$".toRegex() }
 }
 
-fun Collection<String>.variables(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> Collection<String>): List<String> {
+fun Collection<String>.variables(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> Collection<String>?): List<String> {
     return flatMap { context ->
         val result = ArrayList<String>()
         val queued = HashMap<String, Queue<String>>()
-        reader.replaceNested(context) {
-            queued[this] = LinkedList(transfer(this))
+        reader.replaceNested(context) scan@{
+            queued[this] = LinkedList(transfer(this) ?: return@scan this)
             this
         }
         if (queued.isEmpty()) {
@@ -28,15 +28,27 @@ fun Collection<String>.variables(reader: VariableReader = VariableReaders.BRACES
 
         while (queued.any { (_, queue) -> queue.isNotEmpty() }) {
             result += reader.replaceNested(context) {
-                (queued[this]?.poll() ?: "")
+                if (this in queued) {
+                    queued[this]!!.poll() ?: ""
+                } else {
+                    this
+                }
             }
         }
         result
     }
 }
 
+fun Collection<String>.variable(key: String, value: Collection<String>, reader: VariableReader = VariableReaders.BRACES): List<String> {
+    return variables(reader) { if (it == key) value else null }
+}
+
 fun Collection<String>.singletons(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> String?): List<String> {
-    return variables(reader) { variable -> transfer(variable)?.let { listOf(it) } ?: emptyList() }
+    return variables(reader) { transfer(it)?.let(::listOf) }
+}
+
+fun Collection<String>.singleton(key: String, value: String, reader: VariableReader = VariableReaders.BRACES): List<String> {
+    return singletons(reader) { if (it == key) value else null }
 }
 
 infix fun Iterable<String>.select(selector: (String) -> Boolean): List<String> {

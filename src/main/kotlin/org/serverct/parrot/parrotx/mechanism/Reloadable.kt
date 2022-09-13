@@ -6,9 +6,9 @@ import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import taboolib.common.Isolated
 import taboolib.common.LifeCycle
-import taboolib.common.inject.Injector
+import taboolib.common.inject.ClassVisitor
 import taboolib.common.platform.Awake
-import java.lang.reflect.Method
+import taboolib.library.reflex.ClassMethod
 import java.util.function.Supplier
 
 @Isolated
@@ -19,22 +19,22 @@ annotation class Reloadable
 @Awake
 @Isolated
 @Suppress("unused")
-object Reloadables : Injector.Methods {
-    override val lifeCycle: LifeCycle = LifeCycle.LOAD
-    override val priority: Byte = 0
+object Reloadables : ClassVisitor() {
 
-    private val registered: Multimap<Any, Method> = HashMultimap.create()
+    private val registered: Multimap<Any, ClassMethod> = HashMultimap.create()
 
-    override fun inject(method: Method, clazz: Class<*>, instance: Supplier<*>) {
+    override fun getLifeCycle(): LifeCycle = LifeCycle.LOAD
+
+    override fun visit(method: ClassMethod, clazz: Class<*>, instance: Supplier<*>?) {
         if (method.isAnnotationPresent(Reloadable::class.java)) {
-            registered.put(instance.get(), method)
+            registered.put(instance?.get() ?: return, method)
         }
     }
 
     fun execute() {
         registered.asMap().forEach { (instance, methods) ->
             methods.forEach {
-                it(instance)
+                it.invoke(instance)
             }
         }
     }

@@ -59,9 +59,9 @@ class Mapped<E>(title: String) : Menu(title) {
             config.setPreviousPage(this)
             config.setNextPage(this)
 
-            onBuild {
+            onBuild(false) { _, inventory ->
                 shape.all(template, prev, next) { slot, index, item, _ ->
-                    it.setItem(slot, item(slot, index, *args))
+                    inventory.setItem(slot, item(slot, index, *args))
                 }
             }
             onClick { event ->
