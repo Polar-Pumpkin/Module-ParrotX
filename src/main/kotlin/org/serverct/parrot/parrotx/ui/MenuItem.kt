@@ -10,7 +10,6 @@ import org.serverct.parrot.parrotx.ui.data.ActionContext
 import org.serverct.parrot.parrotx.ui.data.BuildContext
 import org.serverct.parrot.parrotx.ui.feature.FunctionalFeature
 import org.serverct.parrot.parrotx.ui.registry.MenuFeatures
-import org.serverct.parrot.parrotx.ui.registry.MenuFeatures.key
 import taboolib.common.platform.function.warning
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.library.xseries.XItemStack
@@ -36,10 +35,10 @@ class MenuItem(
         HashMultimap.create<String, Map<String, Any?>>().apply {
             section["feature"]?.let { feature ->
                 when (feature) {
-                    is String -> put(FunctionalFeature.key, mapOf("keyword" to feature))
+                    is String -> put(FunctionalFeature.name, mapOf("keyword" to feature))
                     is List<*> -> feature.forEach { value ->
                         when (value) {
-                            is String -> put(FunctionalFeature.key, mapOf("keyword" to value))
+                            is String -> put(FunctionalFeature.name, mapOf("keyword" to value))
                             is Map<*, *> -> {
                                 val extra = value.mapKeys { (key, _) -> "$key" }
                                 val type = requireNotNull(extra["=="] ?: extra["type"]) { "未指定 Feature 类型" }.toString().lowercase()

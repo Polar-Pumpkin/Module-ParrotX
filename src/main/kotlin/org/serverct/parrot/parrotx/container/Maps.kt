@@ -20,10 +20,7 @@ abstract class LazyMap<K, V>(val loaded: MutableMap<K, V> = HashMap()) : Map<K, 
     }
 }
 
-class MilestoneMap<K : Comparable<K>, V>(
-    val milestones: NavigableMap<K, V> = TreeMap(),
-    var extend: Extend = Extend.LEFT
-) : NavigableMap<K, V> by milestones {
+class MilestoneMap<K : Comparable<K>, V>(val milestones: NavigableMap<K, V> = TreeMap(), var extend: Extend = Extend.LEFT) : NavigableMap<K, V> by milestones {
     val minimum: Map.Entry<K, V>?
         get() = firstEntry()
     val maximum: Map.Entry<K, V>?

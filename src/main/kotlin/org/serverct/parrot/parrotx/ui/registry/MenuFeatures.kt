@@ -2,12 +2,8 @@ package org.serverct.parrot.parrotx.ui.registry
 
 import org.serverct.parrot.parrotx.container.SimpleRegistry
 import org.serverct.parrot.parrotx.ui.MenuFeature
+import java.util.*
 
-object MenuFeatures : SimpleRegistry<String, MenuFeature>(HashMap()) {
-
-    override val MenuFeature.key: String
-        get() = name.lowercase()
-
-    override fun transformKey(key: String): String = key.lowercase()
-
+object MenuFeatures : SimpleRegistry<String, MenuFeature>(TreeMap(String.CASE_INSENSITIVE_ORDER)) {
+    override fun getKey(value: MenuFeature): String = value.name
 }

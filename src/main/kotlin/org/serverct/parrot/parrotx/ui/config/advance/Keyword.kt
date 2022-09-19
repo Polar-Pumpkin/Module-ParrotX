@@ -5,7 +5,6 @@ import com.google.common.collect.HashBiMap
 import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.config.MenuPart
 import org.serverct.parrot.parrotx.ui.feature.FunctionalFeature
-import org.serverct.parrot.parrotx.ui.registry.MenuFeatures.key
 import taboolib.common.platform.function.info
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -14,7 +13,7 @@ class KeywordConfiguration(val holder: MenuConfiguration) {
     private val keywords: BiMap<String, Char> by lazy {
         HashBiMap.create<String, Char>().apply {
             holder.templates.forEach { char, (_, _, features) ->
-                for (extra in features[FunctionalFeature.key] ?: return@forEach) {
+                for (extra in features[FunctionalFeature.name] ?: return@forEach) {
                     runCatching {
                         val keyword = FunctionalFeature.keyword(extra)
                         require(keyword !in this) { "存在重复的 Functional 关键词: $keyword@${keywords[keyword]}, $char" }
