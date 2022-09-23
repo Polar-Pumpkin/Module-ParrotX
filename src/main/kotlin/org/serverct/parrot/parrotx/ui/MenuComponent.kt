@@ -47,7 +47,7 @@ internal object MenuComponentRegister : ClassVisitor() {
         if (instance == null || !field.isAnnotationPresent(MenuComponent::class.java)) {
             return
         }
-        val name = field.getAnnotation(MenuComponent::class.java).property<String>("name")
+        val name = field.getAnnotation(MenuComponent::class.java).property<String>("name")?.takeIf(String::isNotBlank) ?: field.name
         val group = cached[clazz] ?: return
 
         val fieldType = field.fieldType
