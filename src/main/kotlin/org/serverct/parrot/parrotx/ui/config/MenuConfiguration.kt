@@ -32,7 +32,7 @@ class MenuConfiguration(internal val source: Configuration) {
     fun setPreviousPage(menu: Linked<*>, keyword: String = "Previous") {
         shape[keyword].first().let { slot ->
             menu.setPreviousPage(slot) { _, it ->
-                templates(keyword, slot, 0, it)
+                templates(keyword, slot, 0, !it)
             }
         }
     }
@@ -40,7 +40,7 @@ class MenuConfiguration(internal val source: Configuration) {
     fun setNextPage(menu: Linked<*>, keyword: String = "Next") {
         shape[keyword].first().let { slot ->
             menu.setNextPage(slot) { _, it ->
-                templates(keyword, slot, 0, it)
+                templates(keyword, slot, 0, !it)
             }
         }
     }
