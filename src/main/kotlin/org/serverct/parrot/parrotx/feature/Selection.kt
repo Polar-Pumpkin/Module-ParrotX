@@ -28,7 +28,7 @@ fun Player.select(name: String, message: String? = null, vararg args: Any, build
 }
 
 @Isolated
-internal object Selections {
+object Selections {
 
     private val scheduled: MutableMap<UUID, Selection> = HashMap()
 
@@ -37,7 +37,12 @@ internal object Selections {
         scheduled[user.uniqueId] = Selection(name, builder)
     }
 
-    fun cancel(user: Player) = scheduled.remove(user.uniqueId)?.cancel(user)
+    fun cancel(user: Player): Boolean = scheduled.remove(user.uniqueId)?.cancel(user) == Unit
+
+    fun confirm(user: Player): Boolean? {
+        val selection = scheduled[user.uniqueId] ?: return null
+        return selection.complete(user, true)
+    }
 
     internal fun unregister(uniqueId: UUID, selection: Selection): Boolean = scheduled.remove(uniqueId, selection)
 
@@ -74,6 +79,7 @@ class Selection(val name: String, builder: Selection.() -> Unit) {
     private var onSelectB: Selection.(Player, Location) -> Location? = { _, it -> it }
     private var onCancel: Selection.(Player) -> Unit = {}
     private var onComplete: Selection.(Player, Location, Location) -> Unit = { _, _, _ -> }
+    private var onConfirm: Selection.(Player, Location, Location) -> Unit = { _, _, _ -> }
 
     init {
         builder()
@@ -93,6 +99,10 @@ class Selection(val name: String, builder: Selection.() -> Unit) {
 
     fun onComplete(handle: Selection.(Player, Location, Location) -> Unit) {
         this.onComplete = handle
+    }
+
+    fun onConfirm(handle: Selection.(Player, Location, Location) -> Unit) {
+        this.onConfirm = handle
     }
 
     fun selectA(user: Player, loc: Location) {
@@ -118,7 +128,7 @@ class Selection(val name: String, builder: Selection.() -> Unit) {
         onCancel(user)
     }
 
-    fun complete(user: Player): Boolean {
+    fun complete(user: Player, confirmed: Boolean = false): Boolean {
         if (isCompleted) {
             return false
         }
@@ -143,8 +153,12 @@ class Selection(val name: String, builder: Selection.() -> Unit) {
         // val vectorB = locB.toVector()
         // val min = Vector.getMinimum(vectorA, vectorB).toLocation(world)
         // val max = Vector.getMaximum(vectorA, vectorB).toLocation(world)
-        Selections.unregister(user.uniqueId, this)
-        onComplete(user, locA, locB)
+        if (confirmed) {
+            Selections.unregister(user.uniqueId, this)
+            onConfirm(user, locA, locB)
+        } else {
+            onComplete(user, locA, locB)
+        }
         return true
     }
 

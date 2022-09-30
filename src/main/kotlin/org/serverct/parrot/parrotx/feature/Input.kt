@@ -27,7 +27,7 @@ fun Player.input(name: String, message: String? = null, vararg args: Any, builde
 }
 
 @Isolated
-internal object Inputs {
+object Inputs {
 
     private val scheduled: MutableMap<UUID, Input> = HashMap()
 

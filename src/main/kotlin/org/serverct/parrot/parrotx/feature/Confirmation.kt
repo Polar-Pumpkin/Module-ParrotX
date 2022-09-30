@@ -26,7 +26,7 @@ fun Player.confirm(name: String, message: String? = null, vararg args: Any, buil
 }
 
 @Isolated
-internal object Confirmations {
+object Confirmations {
 
     private val scheduled: MutableMap<UUID, Confirmation> = HashMap()
 
