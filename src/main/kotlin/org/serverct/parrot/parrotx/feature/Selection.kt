@@ -8,6 +8,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.serverct.parrot.parrotx.function.format
 import taboolib.common.Isolated
 import taboolib.common.platform.event.EventPriority
@@ -48,6 +49,10 @@ object Selections {
 
     @SubscribeEvent(EventPriority.LOWEST, true)
     internal fun onSelect(event: PlayerInteractEvent) {
+        if (event.hand != EquipmentSlot.HAND) {
+            return
+        }
+
         val user = event.player
         val loc = event.clickedBlock?.location ?: return
         val selection = scheduled[user.uniqueId] ?: return
