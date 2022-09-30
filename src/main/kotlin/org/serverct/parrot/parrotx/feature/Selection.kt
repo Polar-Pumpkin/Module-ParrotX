@@ -149,9 +149,11 @@ class Selection(val name: String, builder: Selection.() -> Unit) {
             return false
         }
 
-        (if (locA.blockX >= locB.blockX) locA else locB).add(1.0, 0.0, 0.0)
-        (if (locA.blockY >= locB.blockY) locA else locB).add(0.0, 1.0, 0.0)
-        (if (locA.blockZ >= locB.blockZ) locA else locB).add(0.0, 0.0, 1.0)
+        when {
+            locA.blockX != locB.blockX -> (if (locA.blockX >= locB.blockX) locA else locB).add(1.0, 0.0, 0.0)
+            locA.blockY != locB.blockY -> (if (locA.blockY >= locB.blockY) locA else locB).add(0.0, 1.0, 0.0)
+            locA.blockZ != locB.blockZ -> (if (locA.blockZ >= locB.blockZ) locA else locB).add(0.0, 0.0, 1.0)
+        }
 
         // val world = locA.world
         // val vectorA = locA.toVector()
