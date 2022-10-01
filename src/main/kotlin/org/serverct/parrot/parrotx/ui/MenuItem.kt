@@ -1,7 +1,7 @@
 package org.serverct.parrot.parrotx.ui
 
-import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
+import com.google.common.collect.MultimapBuilder
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
@@ -18,7 +18,7 @@ import taboolib.module.ui.ClickEvent
 import taboolib.platform.util.isAir
 import taboolib.platform.util.modifyMeta
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "UnstableApiUsage")
 class MenuItem(
     val config: MenuConfiguration,
     val char: Char,
@@ -32,28 +32,32 @@ class MenuItem(
     constructor(config: MenuConfiguration, section: ConfigurationSection) : this(
         config,
         requireNotNull(section.name.firstOrNull()) { "无法获取模板的映射字符" },
-        HashMultimap.create<String, Map<String, Any?>>().apply {
-            section["feature"]?.let { feature ->
-                when (feature) {
-                    is String -> put(FunctionalFeature.name, mapOf("keyword" to feature))
-                    is List<*> -> feature.forEach { value ->
-                        when (value) {
-                            is String -> put(FunctionalFeature.name, mapOf("keyword" to value))
-                            is Map<*, *> -> {
-                                val extra = value.mapKeys { (key, _) -> "$key" }
-                                val type = requireNotNull(extra["=="] ?: extra["type"]) { "未指定 Feature 类型" }.toString().lowercase()
-                                put(type, extra)
+        MultimapBuilder
+            .treeKeys(String.CASE_INSENSITIVE_ORDER)
+            .linkedListValues()
+            .build<String, Map<String, Any?>>()
+            .apply {
+                section["feature"]?.let { feature ->
+                    when (feature) {
+                        is String -> put(FunctionalFeature.name, mapOf("keyword" to feature))
+                        is List<*> -> feature.forEach { value ->
+                            when (value) {
+                                is String -> put(FunctionalFeature.name, mapOf("keyword" to value))
+                                is Map<*, *> -> {
+                                    val extra = value.mapKeys { (key, _) -> "$key" }
+                                    val type = requireNotNull(extra["=="] ?: extra["type"]) { "未指定 Feature 类型" }.toString().lowercase()
+                                    put(type, extra)
+                                }
+
+                                null -> return@forEach
+                                else -> throw IllegalArgumentException("不支持的 Feature 配置格式: $value (${value.javaClass.canonicalName})")
                             }
-
-                            null -> return@forEach
-                            else -> throw IllegalArgumentException("不支持的 Feature 配置格式: $value (${value.javaClass.canonicalName})")
                         }
-                    }
 
-                    else -> throw IllegalArgumentException("不支持的 Feature 配置格式: $feature (${feature.javaClass.canonicalName})")
+                        else -> throw IllegalArgumentException("不支持的 Feature 配置格式: $feature (${feature.javaClass.canonicalName})")
+                    }
                 }
-            }
-        },
+            },
         requireNotNull(section["material"]?.toString()) { "未指定 Material" }.let { material ->
             if (material.equals("AIR", true)) {
                 ItemStack(Material.AIR)
