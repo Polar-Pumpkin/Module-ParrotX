@@ -73,6 +73,7 @@ class Confirmation(val name: String, builder: Confirmation.() -> Unit) {
     private var onCancel: Confirmation.(Player) -> Unit = {}
     private var onTimeout: Confirmation.(Player) -> Unit = {}
     private var onConfirm: Confirmation.(Player) -> Unit = {}
+    private var onException: Confirmation.(Player, Throwable) -> Unit = { _, _ -> }
 
     init {
         builder()
@@ -93,6 +94,10 @@ class Confirmation(val name: String, builder: Confirmation.() -> Unit) {
 
     fun onConfirm(handle: Confirmation.(Player) -> Unit) {
         this.onConfirm = handle
+    }
+
+    fun onException(handle: Confirmation.(Player, Throwable) -> Unit) {
+        this.onException = handle
     }
 
     fun launch(user: Player) {
@@ -129,7 +134,11 @@ class Confirmation(val name: String, builder: Confirmation.() -> Unit) {
             return
         }
         isConfirmed = true
-        onConfirm(user)
+        try {
+            onConfirm(user)
+        } catch (ex: Throwable) {
+            onException(user, ex)
+        }
     }
 
 }
