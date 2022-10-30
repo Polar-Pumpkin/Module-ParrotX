@@ -13,7 +13,7 @@ interface MenuFunction {
     fun handle(context: ActionContext)
 
 }
-@Suppress("unused")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class MenuFunctionBuilder(name: String? = null, builder: MenuFunctionBuilder.() -> Unit) : MenuFunction {
 
     override var name: String = name ?: ""
@@ -30,9 +30,12 @@ class MenuFunctionBuilder(name: String? = null, builder: MenuFunctionBuilder.() 
         builder = block
     }
 
-    fun onHandle(block: (ActionContext) -> Unit) {
+    fun onClick(block: (ActionContext) -> Unit) {
         handler = block
     }
+
+    @Deprecated("Counterintuitive naming", ReplaceWith("onClick(block)"))
+    fun onHandle(block: (ActionContext) -> Unit) = onClick(block)
 
     override fun build(context: BuildContext): ItemStack = builder(context)
 
