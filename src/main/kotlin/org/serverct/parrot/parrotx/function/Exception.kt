@@ -6,7 +6,7 @@ package org.serverct.parrot.parrotx.function
 import taboolib.common.Isolated
 import taboolib.common.platform.function.warning
 
-@Deprecated("Should not use", ReplaceWith("this because reason"))
+@Deprecated("Duplicate stack trace", ReplaceWith("this because reason"))
 fun Throwable.print(reason: String, exception: (String, Throwable) -> Throwable = { _reason, ex -> IllegalStateException(_reason, ex) }) {
     // exception(reason, this).printStackTrace()
     this because reason
