@@ -14,7 +14,8 @@ fun interface Shaper {
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class ShapeConfiguration(val holder: MenuConfiguration) {
 
-    val raw: List<String> = holder.source.oneOf(MenuPart.SHAPE.paths, ConfigurationSection::getStringList, List<String>::isNotEmpty) ?: emptyList()
+    val raw: List<String> = holder.source.oneOf(*MenuPart.SHAPE.paths, transfer = ConfigurationSection::getStringList)
+        ?.takeIf { it.isNotEmpty() } ?: emptyList()
     val rows: Int = raw.size
     val range: IntRange by lazy { 0 until (rows * 9) }
     val lines: List<String> by lazy {

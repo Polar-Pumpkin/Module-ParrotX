@@ -42,9 +42,9 @@ abstract class Registry<K, V>(val registered: MutableMap<K, V>) : Map<K, V> by r
 abstract class SimpleRegistry<K, V>(source: MutableMap<K, V>) : Registry<K, V>(source) {
     abstract fun getKey(value: V): K
 
-    fun register(value: V, force: Boolean) = register(getKey(value), value, force)
+    fun register(value: V, force: Boolean = false) = register(getKey(value), value, force)
 
-    fun register(force: Boolean, value: () -> V): Result<V> {
+    fun register(force: Boolean = false, value: () -> V): Result<V> {
         return runCatching {
             value()
         }.onSuccess {

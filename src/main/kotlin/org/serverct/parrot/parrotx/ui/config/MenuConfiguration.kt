@@ -12,9 +12,9 @@ import taboolib.module.ui.type.Linked
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class MenuConfiguration(internal val source: Configuration) {
 
-    val isDebug: Boolean by lazy { source.oneOf(MenuPart.DEBUG.paths, ConfigurationSection::getBoolean) ?: false }
+    val isDebug: Boolean by lazy { source.oneOf(*MenuPart.DEBUG.paths, transfer = ConfigurationSection::getBoolean) ?: false }
 
-    val title: String? by lazy { source.oneOf(MenuPart.TITLE.paths, ConfigurationSection::getString) }
+    val title: String? by lazy { source.oneOf(*MenuPart.TITLE.paths, transfer = ConfigurationSection::getString) }
     val shape: ShapeConfiguration by lazy { ShapeConfiguration(this) }
     val templates: TemplateConfiguration by lazy { TemplateConfiguration(this) }
     val keywords: KeywordConfiguration by lazy { KeywordConfiguration(this) }
