@@ -18,11 +18,11 @@ class VariableProviderBuilder(name: String? = null, builder: VariableProviderBui
     override var name: String = name ?: ""
         internal set
 
+    private var producer: (ActionContext) -> String = { "%${name}%" }
+
     init {
         builder()
     }
-
-    private var producer: (ActionContext) -> String = { "%${name}%" }
 
     fun onProduce(block: (ActionContext) -> String) {
         producer = block

@@ -14,11 +14,10 @@ import taboolib.library.configuration.ConfigurationSection
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class TemplateConfiguration(val holder: MenuConfiguration) : SimpleRegistry<Char, MenuItem>(HashMap()) {
 
-    override val MenuItem.key: Char
-        get() = char
+    override fun getKey(value: MenuItem): Char = value.char
 
     init {
-        holder.source.oneOf(MenuPart.TEMPLATE.paths, ConfigurationSection::getConfigurationSection)
+        holder.source.oneOf(*MenuPart.TEMPLATE.paths, transfer = ConfigurationSection::getConfigurationSection)
             ?.asMap { getConfigurationSection(it) }
             ?.forEach { (key, section) ->
                 register {

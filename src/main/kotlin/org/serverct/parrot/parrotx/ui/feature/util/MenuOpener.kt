@@ -18,12 +18,12 @@ class MenuOpenerBuilder(name: String? = null, builder: MenuOpenerBuilder.() -> U
     override var name: String = name ?: ""
         internal set
 
-    init {
-        builder()
-    }
-
     private var handler: (ActionContext) -> Unit = {
         throw NotImplementedError("未调用 onOpen 方法实现该打开方式")
+    }
+
+    init {
+        builder()
     }
 
     fun onOpen(block: (ActionContext) -> Unit) {

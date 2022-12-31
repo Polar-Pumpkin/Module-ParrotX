@@ -62,8 +62,7 @@ fun interface PageableShaper<E> {
 @Suppress("unused")
 class PageConfiguration(val holder: MenuConfiguration) : SimpleRegistry<String, Pageable<*>>(HashMap()) {
 
-    override val Pageable<*>.key: String
-        get() = name
+    override fun getKey(value: Pageable<*>): String = value.name
 
     @Suppress("UNCHECKED_CAST")
     inline operator fun <reified E> invoke(name: String, keyword: String = name, shaper: PageableShaper<E>) {

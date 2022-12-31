@@ -19,15 +19,15 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 
-    implementation("io.izzel:taboolib:${taboolibVersion}:common")
-    implementation("io.izzel:taboolib:${taboolibVersion}:common-5")
-    implementation("io.izzel:taboolib:${taboolibVersion}:module-kether")
-    implementation("io.izzel:taboolib:${taboolibVersion}:module-configuration")
-    implementation("io.izzel:taboolib:${taboolibVersion}:module-database")
-    implementation("io.izzel:taboolib:${taboolibVersion}:module-ui")
-    implementation("io.izzel:taboolib:${taboolibVersion}:module-chat")
-    implementation("io.izzel:taboolib:${taboolibVersion}:module-lang")
-    implementation("io.izzel:taboolib:${taboolibVersion}:platform-bukkit")
+    implementation("io.izzel.taboolib:common:${taboolibVersion}")
+    implementation("io.izzel.taboolib:common-5:${taboolibVersion}")
+    implementation("io.izzel.taboolib:module-kether:${taboolibVersion}")
+    implementation("io.izzel.taboolib:module-configuration:${taboolibVersion}")
+    implementation("io.izzel.taboolib:module-database:${taboolibVersion}")
+    implementation("io.izzel.taboolib:module-ui:${taboolibVersion}")
+    implementation("io.izzel.taboolib:module-chat:${taboolibVersion}")
+    implementation("io.izzel.taboolib:module-lang:${taboolibVersion}")
+    implementation("io.izzel.taboolib:platform-bukkit:${taboolibVersion}")
 }
 
 tasks.withType<JavaCompile> {
@@ -36,7 +36,11 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xjvm-default=all")
+        freeCompilerArgs = listOf(
+            "-Xjvm-default=all",
+            // "-opt-in=kotlin.RequiresOptIn",
+            // "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
+        )
     }
 }
 

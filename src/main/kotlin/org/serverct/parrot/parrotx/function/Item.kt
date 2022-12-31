@@ -14,17 +14,25 @@ import taboolib.module.chat.colored
 import taboolib.platform.util.modifyMeta
 import java.util.*
 
-fun ItemStack.variables(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> Collection<String>): ItemStack {
+fun ItemStack.variables(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> Collection<String>?): ItemStack {
     return modifyMeta<ItemMeta> {
         displayName = displayName?.let {
-            reader.replaceNested(it) { transfer(this).firstOrNull() ?: "" }.colored()
+            reader.replaceNested(it) { transfer(this)?.firstOrNull() ?: this }.colored()
         }
         lore = lore?.variables(reader, transfer)?.colored()
     }
 }
 
+fun ItemStack.variable(key: String, value: Collection<String>, reader: VariableReader = VariableReaders.BRACES): ItemStack {
+    return variables(reader) { if (it == key) value else null }
+}
+
 fun ItemStack.singletons(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> String?): ItemStack {
-    return variables(reader) { variable -> transfer(variable)?.let { listOf(it) } ?: emptyList() }
+    return variables(reader) { transfer(it)?.let(::listOf) }
+}
+
+fun ItemStack.singleton(key: String, value: String, reader: VariableReader = VariableReaders.BRACES): ItemStack {
+    return singletons(reader) { if (it == key) value else null }
 }
 
 infix fun ItemStack.select(selector: (String) -> Boolean): ItemStack {

@@ -39,22 +39,19 @@ object PlayerFreezer {
         }
     }
 
-    fun releaseAll() {
-        labels.keys.forEach { release(it) }
-    }
+    fun releaseAll() = labels.keys.forEach { release(it) }
 
     @SubscribeEvent
     internal fun onToggleFlight(event: PlayerToggleFlightEvent) {
-        val uniqueId = event.player.uniqueId
-        if (labels.containsKey(uniqueId)) {
+        if (labels.containsKey(event.player.uniqueId)) {
             event.isCancelled = true
         }
     }
 
     @SubscribeEvent
     internal fun onJoin(event: PlayerJoinEvent) {
-        var modified = false
         with(event.player) {
+            var modified = false
             if (isInvulnerable) {
                 isInvulnerable = false
                 modified = true
@@ -77,15 +74,10 @@ object PlayerFreezer {
     }
 
     @SubscribeEvent
-    internal fun onQuit(event: PlayerQuitEvent) {
-        val uniqueId = event.player.uniqueId
-        release(uniqueId)
-    }
+    internal fun onQuit(event: PlayerQuitEvent) = release(event.player.uniqueId)
 
     @Awake(LifeCycle.DISABLE)
-    internal fun onDisable() {
-        releaseAll()
-    }
+    internal fun onDisable() = releaseAll()
 
     data class FrozenLabel(val walkSpeed: Float, val flySpeed: Float, val allowFlight: Boolean, val isFlying: Boolean)
 

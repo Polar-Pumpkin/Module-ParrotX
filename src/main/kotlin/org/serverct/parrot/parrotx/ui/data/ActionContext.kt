@@ -7,5 +7,5 @@ data class ActionContext(
     val config: MenuConfiguration,
     val extra: Map<String, Any?>,
     val event: ClickEvent,
-    val args: Collection<Any?>
+    val args: List<Any?>
 )
