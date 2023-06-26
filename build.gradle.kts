@@ -30,6 +30,10 @@ dependencies {
     implementation("io.izzel.taboolib:platform-bukkit:${taboolibVersion}")
 }
 
+java {
+    withSourcesJar()
+}
+
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
