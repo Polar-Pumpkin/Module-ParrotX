@@ -17,8 +17,12 @@ fun username(uniqueId: UUID): String {
     return usernameOrNull(uniqueId) ?: "$uniqueId"
 }
 
-fun user(user: OfflinePlayer, fallbackName: String? = "null"): String {
+fun user(user: OfflinePlayer, fallbackName: String? = null): String {
     return "${user.name ?: fallbackName ?: "null"}(${user.uniqueId})"
+}
+
+fun user(uniqueId: UUID, fallbackName: String? = null): String {
+    return "${usernameOrNull(uniqueId) ?: fallbackName ?: "null"}($uniqueId)"
 }
 
 fun duration(
