@@ -4,6 +4,7 @@
 package org.serverct.parrot.parrotx.function
 
 import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
 import taboolib.common.Isolated
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -14,6 +15,10 @@ fun usernameOrNull(uniqueId: UUID): String? {
 
 fun username(uniqueId: UUID): String {
     return usernameOrNull(uniqueId) ?: "$uniqueId"
+}
+
+fun user(user: OfflinePlayer, fallbackName: String? = "null"): String {
+    return "${user.name ?: fallbackName ?: "null"}(${user.uniqueId})"
 }
 
 fun duration(
