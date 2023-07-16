@@ -16,7 +16,7 @@ class KeywordConfiguration(val holder: MenuConfiguration) {
                 for (extra in features[FunctionalFeature.name] ?: return@forEach) {
                     runCatching {
                         val keyword = FunctionalFeature.keyword(extra)
-                        require(keyword !in this) { "存在重复的 Functional 关键词: $keyword@${keywords[keyword]}, $char" }
+                        require(keyword !in this) { "存在重复的 Functional 关键词: $keyword@${this[keyword]}, $char" }
                         this[keyword] = char
                     }.onFailure {
                         MenuPart.TEMPLATE incorrect ("获取字符 $char 对应模板的 Functional 关键词时遇到错误" to it)
