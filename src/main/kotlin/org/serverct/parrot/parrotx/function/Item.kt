@@ -41,11 +41,13 @@ infix fun ItemStack.select(selector: (String) -> Boolean): ItemStack {
     }
 }
 
+@Suppress("HttpUrlsUsage")
+var headUrl: String = "http://textures.minecraft.net/texture/"
+
 infix fun ItemStack.textured(input: String): ItemStack {
-    @Suppress("HttpUrlsUsage")
     fun encodeTexture(input: String): String {
         return with(Base64.getEncoder()) {
-            encodeToString("{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/$input\"}}}".toByteArray())
+            encodeToString("{\"textures\":{\"SKIN\":{\"url\":\"$headUrl$input\"}}}".toByteArray())
         }
     }
 

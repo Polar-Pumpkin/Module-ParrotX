@@ -38,7 +38,7 @@ fun duration(
     units.forEach { (unit, name) ->
         val duration = unit.toSeconds(1)
         val value = left / duration
-        if (value < 0) {
+        if (value <= 0) {
             return@forEach
         }
         if (builder.isNotEmpty()) {
