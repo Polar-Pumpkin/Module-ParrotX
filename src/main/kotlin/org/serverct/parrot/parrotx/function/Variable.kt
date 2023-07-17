@@ -24,6 +24,7 @@ fun interface SingleVariableFunction : VariableFunction {
     override fun transfer(name: String): Collection<String>? = replace(name)?.let(::listOf)
 }
 
+@Suppress("MemberVisibilityCanBePrivate")
 class VariableTransformerBuilder(builder: VariableTransformerBuilder.() -> Unit) : VariableFunction {
 
     private val registered: MutableMap<String, VariableFunction> = mutableMapOf()
@@ -38,12 +39,28 @@ class VariableTransformerBuilder(builder: VariableTransformerBuilder.() -> Unit)
     }
 
     fun multiple(name: String, func: VariableFunction) {
-        registered[name] = func
+
     }
+
+    fun multiple(value: Enum<*>, func: VariableFunction) = multiple(value.name.lowercase(), func)
+
+    @JvmName("infixStringMultiple")
+    infix fun String.multiple(func: VariableFunction) = multiple(this, func)
+
+    @JvmName("infixEnumMultiple")
+    infix fun Enum<*>.multiple(func: VariableFunction) = multiple(this, func)
 
     fun single(name: String, func: SingleVariableFunction) {
         registered[name] = func
     }
+
+    fun single(value: Enum<*>, func: SingleVariableFunction) = single(value.name.lowercase(), func)
+
+    @JvmName("infixStringSingle")
+    infix fun String.single(func: SingleVariableFunction) = single(this, func)
+
+    @JvmName("infixEnumSingle")
+    infix fun Enum<*>.single(func: SingleVariableFunction) = single(this, func)
 
     override fun transfer(name: String): Collection<String>? = registered[name]?.transfer(name) ?: def.transfer(name)
 
