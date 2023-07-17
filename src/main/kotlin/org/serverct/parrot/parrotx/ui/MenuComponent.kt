@@ -38,7 +38,7 @@ internal object MenuComponentRegister : ClassVisitor() {
             val annotation = clazz.getAnnotation(MenuComponent::class.java) ?: return@compute ""
             buildString {
                 append(annotation.name.ifBlank(it::getSimpleName))
-                append('$')
+                append(MenuFunctions.defaultSeparator)
             }
         }
     }

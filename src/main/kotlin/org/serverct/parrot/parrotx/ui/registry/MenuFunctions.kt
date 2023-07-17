@@ -5,5 +5,7 @@ import org.serverct.parrot.parrotx.ui.feature.util.MenuFunction
 import java.util.*
 
 object MenuFunctions : SimpleRegistry<String, MenuFunction>(TreeMap(String.CASE_INSENSITIVE_ORDER)) {
+    var defaultSeparator = ":"
+
     override fun getKey(value: MenuFunction): String = value.name
 }
