@@ -14,13 +14,17 @@ import taboolib.module.chat.colored
 import taboolib.platform.util.modifyMeta
 import java.util.*
 
-fun ItemStack.variables(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> Collection<String>?): ItemStack {
+fun ItemStack.variables(reader: VariableReader = VariableReaders.BRACES, transformer: VariableTransformer): ItemStack {
     return modifyMeta<ItemMeta> {
         displayName = displayName?.let {
-            reader.replaceNested(it) { transfer(this)?.firstOrNull() ?: this }.colored()
+            reader.replaceNested(it) { transformer.transfer(this)?.firstOrNull() ?: this }.colored()
         }
-        lore = lore?.variables(reader, transfer)?.colored()
+        lore = lore?.variables(reader, transformer)?.colored()
     }
+}
+
+fun ItemStack.transform(reader: VariableReader = VariableReaders.BRACES, builder: VariableTransformerBuilder.() -> Unit): ItemStack {
+    return variables(reader, VariableTransformerBuilder(builder))
 }
 
 fun ItemStack.variable(key: String, value: Collection<String>, reader: VariableReader = VariableReaders.BRACES): ItemStack {
@@ -35,10 +39,14 @@ fun ItemStack.singleton(key: String, value: String, reader: VariableReader = Var
     return singletons(reader) { if (it == key) value else null }
 }
 
-infix fun ItemStack.select(selector: (String) -> Boolean): ItemStack {
+fun ItemStack.areas(filter: AreaFilter): ItemStack {
     return modifyMeta<ItemMeta> {
-        lore = lore?.select(selector)?.colored()
+        lore = lore?.areas(filter)?.colored()
     }
+}
+
+fun ItemStack.areas(builder: AreaFilterBuilder.() -> Unit): ItemStack {
+    return areas(AreaFilterBuilder(builder))
 }
 
 @Suppress("HttpUrlsUsage")
