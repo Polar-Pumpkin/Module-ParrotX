@@ -14,49 +14,51 @@ object VariableReaders {
     internal val AREA_END by lazy { "^#end(?: (?<area>.+))?$".toRegex() }
 }
 
-fun interface VariableTransformer {
+fun interface VariableFunction {
     fun transfer(name: String): Collection<String>?
 }
 
-class VariableTransformerBuilder(builder: VariableTransformerBuilder.() -> Unit) : VariableTransformer {
+fun interface SingleVariableFunction : VariableFunction {
+    fun replace(name: String): String?
 
-    private val registered: MutableMap<String, (String) -> Collection<String>?> = mutableMapOf()
-    private var def: (String) -> Collection<String>? = { null }
+    override fun transfer(name: String): Collection<String>? = replace(name)?.let(::listOf)
+}
+
+class VariableTransformerBuilder(builder: VariableTransformerBuilder.() -> Unit) : VariableFunction {
+
+    private val registered: MutableMap<String, VariableFunction> = mutableMapOf()
+    private var def: VariableFunction = VariableFunction { null }
 
     init {
         builder()
     }
 
-    @JvmName("defaultLines")
-    fun default(func: (String) -> Collection<String>?) {
+    fun default(func: VariableFunction) {
         this.def = func
     }
 
-    @JvmName("defaultLine")
-    fun default(func: (String) -> String?) {
-        this.def = { func(it)?.let(::listOf) }
+    fun default(func: SingleVariableFunction) {
+        this.def = func
     }
 
-    @JvmName("nameLines")
-    fun name(name: String, func: (String) -> Collection<String>?) {
+    fun name(name: String, func: VariableFunction) {
         registered[name] = func
     }
 
-    @JvmName("nameLine")
-    fun name(name: String, func: (String) -> String?) {
-        registered[name] = { func(it)?.let(::listOf) }
+    fun name(name: String, func: SingleVariableFunction) {
+        registered[name] = func
     }
 
-    override fun transfer(name: String): Collection<String>? = registered[name]?.invoke(name) ?: def.invoke(name)
+    override fun transfer(name: String): Collection<String>? = registered[name]?.transfer(name) ?: def.transfer(name)
 
 }
 
-fun Collection<String>.variables(reader: VariableReader = VariableReaders.BRACES, transformer: VariableTransformer): List<String> {
+fun Collection<String>.variables(reader: VariableReader = VariableReaders.BRACES, func: VariableFunction): List<String> {
     return flatMap { context ->
         val result = ArrayList<String>()
         val queued = HashMap<String, Queue<String>>()
         reader.replaceNested(context) scan@{
-            queued[this] = LinkedList(transformer.transfer(this) ?: return@scan this)
+            queued[this] = LinkedList(func.transfer(this) ?: return@scan this)
             this
         }
         if (queued.isEmpty()) {
@@ -84,8 +86,8 @@ fun Collection<String>.variable(key: String, value: Collection<String>, reader: 
     return variables(reader) { if (it == key) value else null }
 }
 
-fun Collection<String>.singletons(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> String?): List<String> {
-    return variables(reader) { transfer(it)?.let(::listOf) }
+fun Collection<String>.singletons(reader: VariableReader = VariableReaders.BRACES, func: SingleVariableFunction): List<String> {
+    return variables(reader, func)
 }
 
 fun Collection<String>.singleton(key: String, value: String, reader: VariableReader = VariableReaders.BRACES): List<String> {
@@ -98,7 +100,7 @@ fun interface AreaFilter {
 
 class AreaFilterBuilder(builder: AreaFilterBuilder.() -> Unit) : AreaFilter {
 
-    private val registered: MutableMap<String, (String) -> Boolean> = mutableMapOf()
+    private val registered: MutableMap<String, AreaFilter> = mutableMapOf()
     private var def = false
 
     init {
@@ -109,11 +111,11 @@ class AreaFilterBuilder(builder: AreaFilterBuilder.() -> Unit) : AreaFilter {
         def = value
     }
 
-    fun name(name: String, func: (String) -> Boolean) {
+    fun name(name: String, func: AreaFilter) {
         registered[name] = func
     }
 
-    override fun filter(name: String): Boolean = registered[name]?.invoke(name) ?: def
+    override fun filter(name: String): Boolean = registered[name]?.filter(name) ?: def
 
 }
 

@@ -14,12 +14,12 @@ import taboolib.module.chat.colored
 import taboolib.platform.util.modifyMeta
 import java.util.*
 
-fun ItemStack.variables(reader: VariableReader = VariableReaders.BRACES, transformer: VariableTransformer): ItemStack {
+fun ItemStack.variables(reader: VariableReader = VariableReaders.BRACES, func: VariableFunction): ItemStack {
     return modifyMeta<ItemMeta> {
         displayName = displayName?.let {
-            reader.replaceNested(it) { transformer.transfer(this)?.firstOrNull() ?: this }.colored()
+            reader.replaceNested(it) { func.transfer(this)?.firstOrNull() ?: this }.colored()
         }
-        lore = lore?.variables(reader, transformer)?.colored()
+        lore = lore?.variables(reader, func)?.colored()
     }
 }
 
@@ -31,8 +31,8 @@ fun ItemStack.variable(key: String, value: Collection<String>, reader: VariableR
     return variables(reader) { if (it == key) value else null }
 }
 
-fun ItemStack.singletons(reader: VariableReader = VariableReaders.BRACES, transfer: (String) -> String?): ItemStack {
-    return variables(reader) { transfer(it)?.let(::listOf) }
+fun ItemStack.singletons(reader: VariableReader = VariableReaders.BRACES, func: SingleVariableFunction): ItemStack {
+    return variables(reader, func)
 }
 
 fun ItemStack.singleton(key: String, value: String, reader: VariableReader = VariableReaders.BRACES): ItemStack {
