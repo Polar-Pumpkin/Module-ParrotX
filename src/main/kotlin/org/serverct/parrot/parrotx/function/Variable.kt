@@ -37,15 +37,11 @@ class VariableTransformerBuilder(builder: VariableTransformerBuilder.() -> Unit)
         this.def = func
     }
 
-    fun default(func: SingleVariableFunction) {
-        this.def = func
-    }
-
-    fun name(name: String, func: VariableFunction) {
+    fun multiple(name: String, func: VariableFunction) {
         registered[name] = func
     }
 
-    fun name(name: String, func: SingleVariableFunction) {
+    fun single(name: String, func: SingleVariableFunction) {
         registered[name] = func
     }
 
