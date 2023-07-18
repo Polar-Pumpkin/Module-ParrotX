@@ -12,7 +12,7 @@ object CommandFeature : MenuFeature() {
     override val name: String = "Command"
 
     override fun handle(context: ActionContext) {
-        val (_, extra, event, _) = context
+        val (_, extra, _, event, _) = context
         val commands = extra.asList<String>("commands") ?: return
         val user = event.clicker
         commands.map {

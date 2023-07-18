@@ -39,11 +39,18 @@ class TemplateConfiguration(val holder: MenuConfiguration) : SimpleRegistry<Char
 
     fun require(keyword: String): MenuItem = get(keyword)!!
 
-    operator fun invoke(keyword: String, slot: Int, index: Int, isFallback: Boolean = false, fallback: String = "Fallback", vararg args: Any?): ItemStack {
+    operator fun invoke(
+        keyword: String,
+        slot: Int,
+        index: Int,
+        isFallback: Boolean = false,
+        fallback: String = "Fallback",
+        args: MutableMap<String, Any?>.() -> Unit = {}
+    ): ItemStack {
         return if (isFallback) {
-            get(fallback)?.invoke(slot, index, *args) ?: ItemStack(Material.AIR)
+            get(fallback)?.invoke(slot, index, args) ?: ItemStack(Material.AIR)
         } else {
-            require(keyword).invoke(slot, index, *args)
+            require(keyword).invoke(slot, index, args)
         }
     }
 

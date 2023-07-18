@@ -16,7 +16,7 @@ object CompleterFeature : MenuFeature() {
     override val name: String = "Completer"
 
     override fun handle(context: ActionContext) {
-        val (_, extra, event, _) = context
+        val (_, extra, _, event, _) = context
         val mode = extra.valueOrNull<String>("mode")?.let {
             requireNotNull(it.enumOf()) { "未知的 Completer 模式: $it" }
         } ?: Mode.COMMAND

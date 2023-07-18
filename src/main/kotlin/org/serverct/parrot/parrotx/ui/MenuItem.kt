@@ -15,6 +15,7 @@ import taboolib.library.configuration.ConfigurationSection
 import taboolib.library.xseries.XItemStack
 import taboolib.module.chat.colored
 import taboolib.module.ui.ClickEvent
+import taboolib.module.ui.Menu
 import taboolib.platform.util.isAir
 import taboolib.platform.util.modifyMeta
 
@@ -45,7 +46,9 @@ class MenuItem(
                                 is String -> put(FunctionalFeature.name, mapOf("keyword" to value))
                                 is Map<*, *> -> {
                                     val extra = value.mapKeys { (key, _) -> "$key" }
-                                    val type = requireNotNull(extra["=="] ?: extra["type"]) { "未指定 Feature 类型" }.toString().lowercase()
+                                    val type = requireNotNull(
+                                        extra["=="] ?: extra["type"]
+                                    ) { "未指定 Feature 类型" }.toString().lowercase()
                                     put(type, extra)
                                 }
 
@@ -79,13 +82,12 @@ class MenuItem(
         }
     )
 
-    fun build(slot: Int, index: Int, vararg args: Any?): ItemStack {
+    fun build(slot: Int, index: Int, args: Map<String, Any?>): ItemStack {
         var result = icon
-        val arguments = listOf(*args)
         features.asMap().forEach { (type, extras) ->
             val feature = MenuFeatures[type] ?: return@forEach warning("模板 $char 配置了一项未知的 Feature: $type")
             extras.forEach { extra ->
-                val context = BuildContext(config, extra, slot, index, result, arguments)
+                val context = BuildContext(config, extra, slot, index, result, args)
                 try {
                     result = feature.build(context)
                 } catch (ex: Throwable) {
@@ -98,14 +100,19 @@ class MenuItem(
         return result
     }
 
-    operator fun invoke(slot: Int, index: Int, vararg args: Any?): ItemStack = build(slot, index, *args)
+    fun build(slot: Int, index: Int, args: MutableMap<String, Any?>.() -> Unit): ItemStack =
+        build(slot, index, mutableMapOf<String, Any?>().apply(args))
 
-    fun handle(event: ClickEvent, vararg args: Any?) {
-        val arguments = listOf(*args)
+    fun build(slot: Int, index: Int, vararg args: Pair<String, Any?>): ItemStack = build(slot, index, args.toMap())
+
+    operator fun invoke(slot: Int, index: Int, args: MutableMap<String, Any?>.() -> Unit = {}): ItemStack =
+        build(slot, index, args)
+
+    fun handle(menu: Menu, event: ClickEvent, args: Map<String, Any?>) {
         features.asMap().forEach { (type, extras) ->
             val feature = MenuFeatures[type] ?: return@forEach warning("模板 $char 配置了一项未知的 Feature: $type")
             extras.forEach { extra ->
-                val context = ActionContext(config, extra, event, arguments)
+                val context = ActionContext(config, extra, menu, event, args)
                 try {
                     feature.handle(context)
                 } catch (ex: Throwable) {
@@ -116,6 +123,11 @@ class MenuItem(
             }
         }
     }
+
+    fun handle(menu: Menu, event: ClickEvent, args: MutableMap<String, Any?>.() -> Unit) =
+        handle(menu, event, mutableMapOf<String, Any?>().apply(args))
+
+    fun handle(menu: Menu, event: ClickEvent, vararg args: Pair<String, Any?>) = handle(menu, event, args.toMap())
 
     operator fun component1(): Char = char
     operator fun component2(): ItemStack = icon

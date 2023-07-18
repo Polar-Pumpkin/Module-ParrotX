@@ -12,7 +12,7 @@ class Mapped<E>(title: String) : Menu(title) {
     private lateinit var config: MenuConfiguration
     private lateinit var template: String
     private lateinit var elements: () -> Iterable<E>
-    private var args: Array<out Any?> = arrayOf()
+    private var args: MutableMap<String, Any?>.() -> Unit = {}
     private var prev: String = "Previous"
     private var next: String = "Next"
 
@@ -28,8 +28,8 @@ class Mapped<E>(title: String) : Menu(title) {
         this.elements = elements
     }
 
-    fun argument(vararg args: Any?) {
-        this.args = args
+    fun argument(builder: MutableMap<String, Any?>.() -> Unit) {
+        this.args = builder
     }
 
     fun setPrevPage(keyword: String) {
@@ -50,10 +50,16 @@ class Mapped<E>(title: String) : Menu(title) {
 
             val _template = templates.require(template)
             onGenerate { _, element, index, slot ->
-                _template(slot, index, element, *args)
+                _template(slot, index) {
+                    this["element"] = element
+                    args()
+                }
             }
             onClick { event, element ->
-                _template.handle(event, this, element, *args)
+                _template.handle(this@Mapped, event) {
+                    this["element"] = element
+                    args()
+                }
             }
 
             config.setPreviousPage(this)
@@ -61,13 +67,13 @@ class Mapped<E>(title: String) : Menu(title) {
 
             onBuild(false) { _, inventory ->
                 shape.all(template, prev, next) { slot, index, item, _ ->
-                    inventory.setItem(slot, item(slot, index, *args))
+                    inventory.setItem(slot, item(slot, index, args))
                 }
             }
             onClick { event ->
                 event.isCancelled = true
                 if (event.rawSlot in shape && event.rawSlot !in slots) {
-                    templates[event.rawSlot]?.handle(event, this, *args)
+                    templates[event.rawSlot]?.handle(this, event, args)
                 }
             }
         }

@@ -38,29 +38,23 @@ class VariableTransformerBuilder(builder: VariableTransformerBuilder.() -> Unit)
         this.def = func
     }
 
-    fun multiple(name: String, func: VariableFunction) {
-
+    infix fun String.multiple(func: VariableFunction) {
+        registered[this] = func
     }
 
-    fun multiple(value: Enum<*>, func: VariableFunction) = multiple(value.name.lowercase(), func)
+    infix fun String.multiple(value: Collection<String>?) = this multiple { value }
 
-    @JvmName("infixStringMultiple")
-    infix fun String.multiple(func: VariableFunction) = multiple(this, func)
+    infix fun String.single(func: SingleVariableFunction) = this multiple func
 
-    @JvmName("infixEnumMultiple")
-    infix fun Enum<*>.multiple(func: VariableFunction) = multiple(this, func)
+    infix fun String.single(value: String?) = this single { value }
 
-    fun single(name: String, func: SingleVariableFunction) {
-        registered[name] = func
-    }
+    infix fun Enum<*>.multiple(func: VariableFunction) = this.name.lowercase() multiple func
 
-    fun single(value: Enum<*>, func: SingleVariableFunction) = single(value.name.lowercase(), func)
+    infix fun Enum<*>.multiple(value: Collection<String>?) = this multiple { value }
 
-    @JvmName("infixStringSingle")
-    infix fun String.single(func: SingleVariableFunction) = single(this, func)
+    infix fun Enum<*>.single(func: SingleVariableFunction) = this multiple func
 
-    @JvmName("infixEnumSingle")
-    infix fun Enum<*>.single(func: SingleVariableFunction) = single(this, func)
+    infix fun Enum<*>.single(value: String?) = this single { value }
 
     override fun transfer(name: String): Collection<String>? = registered[name]?.transfer(name) ?: def.transfer(name)
 
