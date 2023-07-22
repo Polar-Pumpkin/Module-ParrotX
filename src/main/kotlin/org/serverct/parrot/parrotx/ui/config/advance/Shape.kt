@@ -5,7 +5,6 @@ import org.serverct.parrot.parrotx.ui.MenuItem
 import org.serverct.parrot.parrotx.ui.MenuKeyword
 import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
 import org.serverct.parrot.parrotx.ui.config.MenuPart
-import taboolib.library.configuration.ConfigurationSection
 
 fun interface Shaper {
     fun shape(slot: Int, index: Int, item: MenuItem, keyword: MenuKeyword)
@@ -14,8 +13,9 @@ fun interface Shaper {
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class ShapeConfiguration(val holder: MenuConfiguration) {
 
-    val raw: List<String> = holder.source.oneOf(*MenuPart.SHAPE.paths, transfer = ConfigurationSection::getStringList)
-        ?.takeIf { it.isNotEmpty() } ?: emptyList()
+    val raw: List<String> =
+        holder.source.oneOf(*MenuPart.SHAPE.paths, validate = { it.isNotEmpty() }, getter = { getStringList(it) })
+            ?: emptyList()
     val rows: Int = raw.size
     val range: IntRange by lazy { 0 until (rows * 9) }
     val lines: List<String> by lazy {
@@ -39,7 +39,8 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
         }
     }
 
-    operator fun get(slot: Int): Char = requireNotNull(flatten.elementAtOrNull(slot)) { "尝试获取越界槽位的字符: $slot" }
+    operator fun get(slot: Int): Char =
+        requireNotNull(flatten.elementAtOrNull(slot)) { "尝试获取越界槽位的字符: $slot" }
 
     operator fun get(ref: Char, empty: Boolean = false, multi: Boolean = true): Set<Int> {
         val indexes = LinkedHashSet<Int>()
@@ -90,7 +91,12 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
             if (keyword != null && keyword in ignores) {
                 return@forEachIndexed
             }
-            shaper.shape(slot, repeats.compute(char) { _, current -> (current ?: -1) + 1 }!!, template, MenuKeyword.of(keyword))
+            shaper.shape(
+                slot,
+                repeats.compute(char) { _, current -> (current ?: -1) + 1 }!!,
+                template,
+                MenuKeyword.of(keyword)
+            )
         }
     }
 

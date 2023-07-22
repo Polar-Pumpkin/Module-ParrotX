@@ -17,7 +17,7 @@ class TemplateConfiguration(val holder: MenuConfiguration) : SimpleRegistry<Char
     override fun getKey(value: MenuItem): Char = value.char
 
     init {
-        holder.source.oneOf(*MenuPart.TEMPLATE.paths, transfer = ConfigurationSection::getConfigurationSection)
+        holder.source.oneOf(*MenuPart.TEMPLATE.paths, getter = ConfigurationSection::getConfigurationSection)
             ?.asMap { getConfigurationSection(it) }
             ?.forEach { (key, section) ->
                 register {

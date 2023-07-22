@@ -37,8 +37,12 @@ fun <V> ConfigurationSection.asMap(path: String = "", transfer: ConfigurationSec
     return map
 }
 
-fun <V> ConfigurationSection.oneOf(vararg paths: String, transfer: ConfigurationSection.(String) -> V?): V? {
+fun <V> ConfigurationSection.oneOf(
+    vararg paths: String,
+    validate: (V) -> Boolean = { true },
+    getter: ConfigurationSection.(String) -> V?
+): V? {
     return paths.firstNotNullOfOrNull {
-        transfer(this, it)
+        getter(this, it)?.takeIf(validate)
     }
 }
