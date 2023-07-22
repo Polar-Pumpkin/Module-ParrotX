@@ -3,7 +3,7 @@ package org.serverct.parrot.parrotx.ui.config.advance
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
-import org.serverct.parrot.parrotx.ui.config.MenuPart
+import org.serverct.parrot.parrotx.ui.config.MenuSection
 import org.serverct.parrot.parrotx.ui.feature.FunctionalFeature
 import taboolib.common.platform.function.info
 
@@ -19,7 +19,7 @@ class KeywordConfiguration(val holder: MenuConfiguration) {
                         require(keyword !in this) { "存在重复的 Functional 关键词: $keyword@${this[keyword]}, $char" }
                         this[keyword] = char
                     }.onFailure {
-                        MenuPart.TEMPLATE incorrect ("获取字符 $char 对应模板的 Functional 关键词时遇到错误" to it)
+                        MenuSection.TEMPLATE incorrect ("获取字符 $char 对应模板的 Functional 关键词时遇到错误" to it)
                     }
                 }
             }
@@ -36,6 +36,6 @@ class KeywordConfiguration(val holder: MenuConfiguration) {
 
     operator fun get(keyword: String): Char? = keywords[keyword]
 
-    fun require(keyword: String): Char = get(keyword) ?: (MenuPart.TEMPLATE incorrect "缺少与 Functional 关键词 $keyword 相关联的模版")
+    fun require(keyword: String): Char = get(keyword) ?: (MenuSection.TEMPLATE incorrect "缺少与 Functional 关键词 $keyword 相关联的模版")
 
 }

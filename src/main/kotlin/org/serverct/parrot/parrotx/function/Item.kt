@@ -63,7 +63,6 @@ infix fun ItemStack.textured(input: String): ItemStack {
         val profile = GameProfile(UUID.randomUUID(), null)
         val texture = if (input.length in 60..100) encodeTexture(input) else input
         profile.properties.put("textures", Property("textures", texture, "${pluginId}_TexturedSkull"))
-
         setProperty("profile", profile)
     }
 }

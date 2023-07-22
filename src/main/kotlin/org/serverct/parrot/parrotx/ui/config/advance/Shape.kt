@@ -4,7 +4,7 @@ import org.serverct.parrot.parrotx.function.oneOf
 import org.serverct.parrot.parrotx.ui.MenuItem
 import org.serverct.parrot.parrotx.ui.MenuKeyword
 import org.serverct.parrot.parrotx.ui.config.MenuConfiguration
-import org.serverct.parrot.parrotx.ui.config.MenuPart
+import org.serverct.parrot.parrotx.ui.config.MenuSection
 
 fun interface Shaper {
     fun shape(slot: Int, index: Int, item: MenuItem, keyword: MenuKeyword)
@@ -14,7 +14,7 @@ fun interface Shaper {
 class ShapeConfiguration(val holder: MenuConfiguration) {
 
     val raw: List<String> =
-        holder.source.oneOf(*MenuPart.SHAPE.paths, validate = { it.isNotEmpty() }, getter = { getStringList(it) })
+        holder.source.oneOf(*MenuSection.SHAPE.paths, validate = { it.isNotEmpty() }, getter = { getStringList(it) })
             ?: emptyList()
     val rows: Int = raw.size
     val range: IntRange by lazy { 0 until (rows * 9) }
@@ -35,7 +35,7 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
 
     init {
         if (rows == 0) {
-            MenuPart.SHAPE.missing()
+            MenuSection.SHAPE.missing()
         }
     }
 
@@ -50,10 +50,10 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
             }
         }
         if (!empty && indexes.isEmpty()) {
-            MenuPart.SHAPE incorrect "未映射字符 $ref"
+            MenuSection.SHAPE incorrect "未映射字符 $ref"
         }
         if (!multi && indexes.size > 1) {
-            MenuPart.SHAPE incorrect "字符 $ref 映射了多个位置"
+            MenuSection.SHAPE incorrect "字符 $ref 映射了多个位置"
         }
         return indexes
     }
@@ -66,10 +66,10 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
         }
 
         if (!empty && indexes.isEmpty()) {
-            MenuPart.SHAPE incorrect "未映射 Functional 关键词 $keyword($ref)"
+            MenuSection.SHAPE incorrect "未映射 Functional 关键词 $keyword($ref)"
         }
         if (!multi && indexes.size > 1) {
-            MenuPart.SHAPE incorrect "Functional 关键词 $keyword($ref) 映射了多个位置"
+            MenuSection.SHAPE incorrect "Functional 关键词 $keyword($ref) 映射了多个位置"
         }
         return indexes
     }

@@ -12,9 +12,9 @@ import taboolib.module.ui.type.Linked
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class MenuConfiguration(internal val source: Configuration) {
 
-    val isDebug: Boolean by lazy { source.oneOf(*MenuPart.DEBUG.paths, getter = ConfigurationSection::getBoolean) ?: false }
+    val isDebug: Boolean by lazy { source.oneOf(*MenuSection.DEBUG.paths, getter = ConfigurationSection::getBoolean) ?: false }
 
-    val title: String? by lazy { source.oneOf(*MenuPart.TITLE.paths, getter = ConfigurationSection::getString) }
+    val title: String? by lazy { source.oneOf(*MenuSection.TITLE.paths, getter = ConfigurationSection::getString) }
     val shape: ShapeConfiguration by lazy { ShapeConfiguration(this) }
     val templates: TemplateConfiguration by lazy { TemplateConfiguration(this) }
     val keywords: KeywordConfiguration by lazy { KeywordConfiguration(this) }
@@ -23,7 +23,7 @@ class MenuConfiguration(internal val source: Configuration) {
 
     fun title(vararg variables: Pair<String, () -> String>): String {
         return with(variables.toMap()) {
-            VariableReaders.BRACES.replaceNested(title ?: MenuPart.TITLE.missing()) {
+            VariableReaders.BRACES.replaceNested(title ?: MenuSection.TITLE.missing()) {
                 get(this)?.invoke() ?: ""
             }
         }

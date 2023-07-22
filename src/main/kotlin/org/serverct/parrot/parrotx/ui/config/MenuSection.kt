@@ -1,10 +1,10 @@
 package org.serverct.parrot.parrotx.ui.config
 
-internal enum class MenuPart(val display: String, vararg val paths: String) {
-    DEBUG("调试模式", "debug"),
-    TITLE("标题", "title"),
+internal enum class MenuSection(val display: String, vararg val paths: String) {
+    DEBUG("调试模式", "debug", "dev"),
+    TITLE("标题", "title", "heading"),
     SHAPE("布局", "shape", "layout"),
-    TEMPLATE("模板", "template", "item");
+    TEMPLATE("模板", "templates", "template", "items", "item");
 
     val formatted: String by lazy { "$display(${paths.joinToString("/")})" }
 
