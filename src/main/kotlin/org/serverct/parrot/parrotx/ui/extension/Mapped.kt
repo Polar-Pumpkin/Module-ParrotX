@@ -45,6 +45,7 @@ class Mapped<E>(title: String) : Menu(title) {
             val (shape, templates) = config
             val slots = shape[template].toList()
             rows(shape.rows)
+            map(*shape.array)
             slots(slots)
             elements { elements().toList() }
 

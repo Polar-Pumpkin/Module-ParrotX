@@ -41,15 +41,27 @@ class ShapeConfiguration(val holder: MenuConfiguration) {
 
     operator fun get(slot: Int): Char = requireNotNull(flatten.elementAtOrNull(slot)) { "尝试获取越界槽位的字符: $slot" }
 
+    operator fun get(ref: Char, empty: Boolean = false, multi: Boolean = true): Set<Int> {
+        val indexes = LinkedHashSet<Int>()
+        flatten.forEachIndexed { index, char ->
+            if (char == ref) {
+                indexes += index
+            }
+        }
+        if (!empty && indexes.isEmpty()) {
+            MenuPart.SHAPE incorrect "未映射字符 $ref"
+        }
+        if (!multi && indexes.size > 1) {
+            MenuPart.SHAPE incorrect "字符 $ref 映射了多个位置"
+        }
+        return indexes
+    }
+
     operator fun get(keyword: String, empty: Boolean = false, multi: Boolean = true): Set<Int> {
         val indexes = LinkedHashSet<Int>()
         val ref = holder.keywords[keyword]
         if (ref != null) {
-            flatten.forEachIndexed { index, char ->
-                if (char == ref) {
-                    indexes += index
-                }
-            }
+            indexes.addAll(get(ref, empty = true, multi = true))
         }
 
         if (!empty && indexes.isEmpty()) {
