@@ -52,7 +52,7 @@ object Heads {
         // from cache
         cachedTextures[username]?.let { return CompletableFuture.completedFuture(it) }
         // from Player
-        Bukkit.getPlayerExact(username).invokeMethod<GameProfile>("getProfile")
+        Bukkit.getPlayerExact(username)?.invokeMethod<GameProfile>("getProfile")
             ?.let { fromGameProfile(username, it) }
             ?.let { return it }
         // from OfflinePlayer
