@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack
 import org.serverct.parrot.parrotx.function.textured
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
+import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.library.xseries.XMaterial
 import java.net.URL
@@ -50,17 +51,14 @@ object Heads {
     fun getPlayerTexture(username: String): CompletableFuture<String?> {
         // from cache
         cachedTextures[username]?.let { return CompletableFuture.completedFuture(it) }
+        // from Player
+        Bukkit.getPlayerExact(username).invokeMethod<GameProfile>("getProfile")
+            ?.let { fromGameProfile(username, it) }
+            ?.let { return it }
         // from OfflinePlayer
-        val offline = Bukkit.getOfflinePlayer(username)
-        offline.invokeMethod<GameProfile>("getProfile")
-            ?.properties
-            ?.get("textures")
-            ?.find { it.value != null }
-            ?.value
-            ?.let {
-                cachedTextures[username] = it
-                return CompletableFuture.completedFuture(it)
-            }
+        Bukkit.getOfflinePlayer(username).getProperty<GameProfile>("profile")
+            ?.let { fromGameProfile(username, it) }
+            ?.let { return it }
         // from Mojang API
         val future = CompletableFuture<String?>()
         submit(async = true) {
@@ -79,6 +77,18 @@ object Heads {
                 } ?: future.complete(null)
         }
         return future
+    }
+
+    private fun fromGameProfile(username: String, profile: GameProfile): CompletableFuture<String?>? {
+        profile.properties
+            ?.get("textures")
+            ?.find { it.value != null }
+            ?.value
+            ?.let {
+                cachedTextures[username] = it
+                return CompletableFuture.completedFuture(it)
+            }
+        return null
     }
 
     private fun fromUrl(url: String): String {
