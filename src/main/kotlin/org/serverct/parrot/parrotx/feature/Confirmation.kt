@@ -1,11 +1,9 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
-@file:Isolated
 
 package org.serverct.parrot.parrotx.feature
 
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
-import taboolib.common.Isolated
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
@@ -25,7 +23,6 @@ fun Player.confirm(name: String, message: String? = null, vararg args: Any, buil
     Confirmations.schedule(this, name, builder)
 }
 
-@Isolated
 object Confirmations {
 
     private val scheduled: MutableMap<UUID, Confirmation> = HashMap()
@@ -54,7 +51,6 @@ object Confirmations {
 
 }
 
-@Isolated
 class Confirmation(val name: String, builder: Confirmation.() -> Unit) {
 
     var isCancelled: Boolean = false

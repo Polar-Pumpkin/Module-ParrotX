@@ -5,7 +5,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerToggleFlightEvent
-import taboolib.common.Isolated
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
@@ -13,7 +12,6 @@ import taboolib.common.platform.function.info
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-@Isolated
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object PlayerFreezer {
 

@@ -7,7 +7,7 @@ import taboolib.module.ui.buildMenu
 import taboolib.module.ui.type.Linked
 
 @Suppress("unused")
-class Mapped<E>(title: String) : Menu(title) {
+class Mapped<E>(override var title: String) : Menu {
 
     private lateinit var config: MenuConfiguration
     private lateinit var template: String

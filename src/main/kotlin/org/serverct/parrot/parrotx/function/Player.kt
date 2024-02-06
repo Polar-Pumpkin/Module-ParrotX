@@ -1,4 +1,3 @@
-@file:Isolated
 @file:Suppress("unused")
 
 package org.serverct.parrot.parrotx.function
@@ -8,7 +7,6 @@ import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
-import taboolib.common.Isolated
 import taboolib.platform.util.sendInfoMessage
 import taboolib.platform.util.sendLang
 

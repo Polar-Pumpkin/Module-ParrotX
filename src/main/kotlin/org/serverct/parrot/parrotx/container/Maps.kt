@@ -1,10 +1,8 @@
-@file:Isolated
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
 package org.serverct.parrot.parrotx.container
 
 import com.google.common.collect.Range
-import taboolib.common.Isolated
 import java.util.*
 
 abstract class LazyMap<K, V>(val loaded: MutableMap<K, V> = HashMap()) : Map<K, V> by loaded {

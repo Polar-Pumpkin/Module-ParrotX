@@ -1,11 +1,9 @@
 package org.serverct.parrot.parrotx.util
 
-import taboolib.common.Isolated
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.ScriptFrame
 import java.util.concurrent.CompletableFuture
 
-@Isolated
 @Suppress("unused")
 object KetherUtil {
 

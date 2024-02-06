@@ -1,11 +1,9 @@
-@file:Isolated
 @file:Suppress("unused")
 
 package org.serverct.parrot.parrotx.feature
 
 import org.bukkit.Bukkit
 import org.bukkit.event.player.PlayerLoginEvent
-import taboolib.common.Isolated
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.pluginId
@@ -27,7 +25,6 @@ inline fun <R> important(action: () -> R): Result<R> {
     }
 }
 
-@Isolated
 internal object LoginListener {
     @SubscribeEvent(EventPriority.LOWEST, true)
     fun onLogin(event: PlayerLoginEvent) {
