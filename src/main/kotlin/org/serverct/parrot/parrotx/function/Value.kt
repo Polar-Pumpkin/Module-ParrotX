@@ -1,11 +1,9 @@
-@file:Isolated
 @file:Suppress("unused")
 
 package org.serverct.parrot.parrotx.function
 
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
-import taboolib.common.Isolated
 import java.util.*
 import java.util.concurrent.TimeUnit
 

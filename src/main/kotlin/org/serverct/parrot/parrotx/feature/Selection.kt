@@ -1,4 +1,3 @@
-@file:Isolated
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package org.serverct.parrot.parrotx.feature
@@ -10,7 +9,6 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.serverct.parrot.parrotx.function.format
-import taboolib.common.Isolated
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.module.chat.colored
@@ -28,7 +26,6 @@ fun Player.select(name: String, message: String? = null, vararg args: Any, build
     Selections.schedule(this, name, builder)
 }
 
-@Isolated
 object Selections {
 
     private val scheduled: MutableMap<UUID, Selection> = HashMap()
@@ -71,7 +68,6 @@ object Selections {
 
 }
 
-@Isolated
 class Selection(val name: String, builder: Selection.() -> Unit) {
 
     var isCompleted: Boolean = false

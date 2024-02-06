@@ -1,10 +1,7 @@
-@file:Isolated
-
 package org.serverct.parrot.parrotx.mechanism
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
-import taboolib.common.Isolated
 import taboolib.common.LifeCycle
 import taboolib.common.inject.ClassVisitor
 import taboolib.common.platform.Awake
@@ -15,13 +12,11 @@ import taboolib.module.configuration.Configuration
 import java.util.function.Consumer
 import java.util.function.Supplier
 
-@Isolated
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Reloadable
 
 @Awake
-@Isolated
 @Suppress("unused")
 object Reloadables : ClassVisitor() {
 

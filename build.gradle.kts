@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `java-library`
     `maven-publish`
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.8.22"
 }
 
 repositories {
@@ -19,8 +19,14 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 
-    implementation("io.izzel.taboolib:common:${taboolibVersion}")
-    implementation("io.izzel.taboolib:common-5:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:common:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:common-legacy-api:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:common-env:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:common-platform-api:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:common-reflex:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:common-util:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:module-bukkit-util:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:module-bukkit-xseries:${taboolibVersion}")
     implementation("io.izzel.taboolib:module-kether:${taboolibVersion}")
     implementation("io.izzel.taboolib:module-configuration:${taboolibVersion}")
     implementation("io.izzel.taboolib:module-database:${taboolibVersion}")
