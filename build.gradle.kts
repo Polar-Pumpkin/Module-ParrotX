@@ -27,13 +27,13 @@ dependencies {
     compileOnly("io.izzel.taboolib:common-util:${taboolibVersion}")
     compileOnly("io.izzel.taboolib:module-bukkit-util:${taboolibVersion}")
     compileOnly("io.izzel.taboolib:module-bukkit-xseries:${taboolibVersion}")
-    implementation("io.izzel.taboolib:module-kether:${taboolibVersion}")
-    implementation("io.izzel.taboolib:module-configuration:${taboolibVersion}")
-    implementation("io.izzel.taboolib:module-database:${taboolibVersion}")
-    implementation("io.izzel.taboolib:module-ui:${taboolibVersion}")
-    implementation("io.izzel.taboolib:module-chat:${taboolibVersion}")
-    implementation("io.izzel.taboolib:module-lang:${taboolibVersion}")
-    implementation("io.izzel.taboolib:platform-bukkit:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:module-kether:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:module-configuration:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:module-database:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:module-ui:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:module-chat:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:module-lang:${taboolibVersion}")
+    compileOnly("io.izzel.taboolib:platform-bukkit:${taboolibVersion}")
 }
 
 java {
