@@ -9,4 +9,4 @@ import taboolib.common.platform.command.CommandContext
  * 将 CommandContext 直接转换为 Player
  * @param player context中玩家参数名称
  */
-fun CommandContext<*>.player(player: String = "player"): Player = Bukkit.getPlayerExact(this[player])!!
+fun CommandContext<*>.toPlayer(player: String = "player"): Player = Bukkit.getPlayerExact(this[player])!!

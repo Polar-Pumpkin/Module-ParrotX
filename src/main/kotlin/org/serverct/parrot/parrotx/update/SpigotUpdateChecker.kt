@@ -24,6 +24,10 @@ import java.util.function.Consumer
  *     }
  * }
  * ```
+ * 或者
+ * ```kotlin
+ * SpigotUpdateChecker(12345).check()
+ * ```
  */
 class SpigotUpdateChecker(private val resourceId: Int) {
 

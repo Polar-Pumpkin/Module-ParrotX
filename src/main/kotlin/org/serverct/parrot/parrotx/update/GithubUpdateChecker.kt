@@ -24,6 +24,10 @@ import java.util.function.Consumer
  *     }
  * }
  * ```
+ * 或者
+ * ```kotlin
+ * GithubUpdateChecker("l1-an", "YuSpawnerHologram").check()
+ * ```
  */
 class GithubUpdateChecker(private val author: String, private val githubRepository: String) {
 
